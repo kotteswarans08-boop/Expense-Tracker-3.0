@@ -1,37 +1,35 @@
-const CACHE_NAME = 'expense-tracker-v3';
+// ── Expense Tracker Service Worker ──────────────────────────
+const CACHE_NAME = 'expense-tracker-v4';
 const BASE = '/Expense-Tracker-3.0';
 
-// Everything your app needs to work offline
 const PRECACHE_URLS = [
   BASE + '/',
   BASE + '/index.html',
   BASE + '/manifest.json',
-  BASE + '/expense_app_icon_512x512.png',
-  // External CDN assets — cached on first use
-  'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap',
-  'https://cdn.jsdelivr.net/npm/chart.js'
+  BASE + '/expense_app_icon_512x512_1.png',
 ];
 
-// ── INSTALL: pre-cache core assets ──────────────────────────
+// ── INSTALL ─────────────────────────────────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // Cache local files strictly; CDN files best-effort
-      const local = [BASE + '/', BASE + '/index.html', BASE + '/manifest.json', BASE + '/expense_app_icon_512x512.png'];
-      const cdn   = [
-        'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap',
-        'https://cdn.jsdelivr.net/npm/chart.js'
-      ];
-      return cache.addAll(local).then(() =>
-        Promise.allSettled(cdn.map(url =>
-          cache.add(url).catch(() => {/* ignore CDN failures */})
-        ))
-      );
+      // Cache local files strictly
+      return cache.addAll(PRECACHE_URLS).then(() => {
+        // Cache CDN files best-effort (don't fail install if offline)
+        const cdnUrls = [
+          'https://cdn.jsdelivr.net/npm/chart.js',
+          'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap',
+          'https://accounts.google.com/gsi/client'
+        ];
+        return Promise.allSettled(
+          cdnUrls.map(url => cache.add(url).catch(() => {}))
+        );
+      });
     }).then(() => self.skipWaiting())
   );
 });
 
-// ── ACTIVATE: delete old caches ─────────────────────────────
+// ── ACTIVATE ─────────────────────────────────────────────────
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -42,16 +40,24 @@ self.addEventListener('activate', event => {
   );
 });
 
-// ── FETCH: serve from cache, fall back to network ───────────
+// ── FETCH ────────────────────────────────────────────────────
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
-  // For navigation requests (opening the app, refreshing) —
-  // ALWAYS serve index.html from cache. This is the fix for the
-  // 404-on-reopen bug with GitHub Pages subdirectory hosting.
+  // Skip Google OAuth and API requests — never cache these
+  if (
+    url.hostname === 'accounts.google.com' ||
+    url.hostname === 'oauth2.googleapis.com' ||
+    url.pathname.includes('/gsi/') ||
+    url.pathname.includes('script.google.com')
+  ) {
+    return; // Let browser handle normally
+  }
+
+  // For navigation (app opens, refreshes) — serve index.html from cache
   if (event.request.mode === 'navigate') {
     event.respondWith(
       caches.match(BASE + '/index.html').then(cached => {
@@ -64,15 +70,14 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // For all other requests: cache-first, then network, then cache fallback
+  // For all other requests: cache-first, then network
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
-
       return fetch(event.request).then(response => {
-        // Only cache valid responses from our origin or allowed CDNs
+        // Cache valid responses from our origin or allowed CDNs
         if (
-          response.ok &&
+          response && response.ok &&
           (url.origin === self.location.origin ||
            url.hostname === 'fonts.googleapis.com' ||
            url.hostname === 'fonts.gstatic.com' ||
@@ -83,7 +88,7 @@ self.addEventListener('fetch', event => {
         }
         return response;
       }).catch(() => {
-        // If completely offline and not cached, return index.html as fallback
+        // Offline fallback
         if (url.pathname.startsWith(BASE)) {
           return caches.match(BASE + '/index.html');
         }
