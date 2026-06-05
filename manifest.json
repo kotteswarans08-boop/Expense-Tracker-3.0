@@ -10,13 +10,13 @@
   "theme_color": "#03045e",
   "icons": [
     {
-      "src": "/Expense-Tracker-3.0/expense_app_icon_512x512.png",
+      "src": "/Expense-Tracker-3.0/expense_app_icon_512x512_1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Expense-Tracker-3.0/expense_app_icon_512x512.png",
+      "src": "/Expense-Tracker-3.0/expense_app_icon_512x512_1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
