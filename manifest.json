@@ -1,0 +1,27 @@
+{
+  "name": "ExpenseTracker — Team Tech Royal",
+  "short_name": "ExpenseTracker",
+  "description": "Personal finance tracker with TripBook, Debts, Savings and Google Sheets sync.",
+  "start_url": "/Expense-Tracker-3.0/",
+  "scope": "/Expense-Tracker-3.0/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#03045e",
+  "theme_color": "#03045e",
+  "icons": [
+    {
+      "src": "/Expense-Tracker-3.0/expense_app_icon_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Expense-Tracker-3.0/expense_app_icon_512x512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "en-IN"
+}
