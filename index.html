@@ -120,21 +120,32 @@ header{background:var(--header-bg);backdrop-filter:blur(24px) saturate(180%);bor
 .toggle-knob{width:12px;height:12px;background:var(--toggle-knob);border-radius:50%;position:absolute;top:3px;left:3px;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);box-shadow:0 1px 4px rgba(0,0,0,0.25);}
 [data-theme="dark"] .toggle-knob{transform:translateX(14px);}
 .toggle-icon{font-size:0.78rem;}
-.gs-pill{display:flex;align-items:center;gap:0.35rem;background:var(--card2);border:1px solid var(--border);border-radius:50px;padding:0.28rem 0.6rem 0.28rem 0.5rem;cursor:pointer;transition:all 0.2s;font-size:0.75rem;color:var(--txt2);font-weight:600;flex-shrink:0;}
-.gs-pill:hover{background:var(--hover-bg);}
-.gs-lbl{display:none;}
+
+/* ── AUTO-SYNC INDICATOR (replaces gs-pill for users) ── */
+.sync-indicator{display:flex;align-items:center;gap:0.35rem;background:var(--card2);border:1px solid var(--border);border-radius:50px;padding:0.28rem 0.7rem;font-size:0.72rem;color:var(--txt3);font-weight:600;flex-shrink:0;cursor:default;user-select:none;transition:all 0.3s;}
+.sync-indicator.synced{border-color:rgba(34,197,94,0.4);color:#22c55e;}
+.sync-indicator.syncing{border-color:rgba(245,158,11,0.4);color:var(--amber);}
+.sync-indicator.guest-mode{opacity:0.5;}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background 0.3s;flex-shrink:0;}
+.sdot.live{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.6);}
+.sdot.syncing{background:var(--amber);animation:blink 0.7s infinite;}
+.sdot.err{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* Hidden gs-pill (kept for internal sync dots, never shown) */
+.gs-pill{display:none!important;}
 .gdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background 0.3s;flex-shrink:0;}
 .gdot.live{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.6);}
 .gdot.syncing{background:var(--amber);animation:blink 0.7s infinite;}
 .gdot.err{background:var(--red);}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.gs-lbl{display:none;}
+
 .user-chip{font-weight:800;font-size:0.72rem;padding:0.32rem 0.7rem;border-radius:50px;font-family:var(--font-display);letter-spacing:0.2px;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0;}
 [data-theme="light"] .user-chip{background:linear-gradient(135deg,#03045e,#0077b6);color:#caf0f8;}
 [data-theme="dark"] .user-chip{background:linear-gradient(135deg,#0077b6,#00b4d8);color:#03045e;}
 .logout-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;color:var(--txt3);transition:all 0.2s;padding:0;flex-shrink:0;}
 .logout-btn:hover{background:var(--red-light);border-color:var(--red);color:var(--red);}
 @media(min-width:520px){
-  .gs-lbl{display:inline;}
   .brand-name{display:block;font-family:var(--font-display);font-weight:800;font-size:1.05rem;color:var(--brand);letter-spacing:-0.3px;}
   .user-chip{max-width:100px;font-size:0.78rem;padding:0.38rem 0.95rem;}
   .logout-btn{width:32px;height:32px;font-size:1rem;}
@@ -163,32 +174,8 @@ nav::-webkit-scrollbar{height:0;}
 .btn-ghost{background:none;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:0.6rem 1.2rem;cursor:pointer;font-family:var(--font-body);font-size:0.88rem;color:var(--txt2);transition:all 0.2s;}
 .btn-ghost:hover{background:var(--hover-bg);}
 
-/* GS INSTRUCTIONS */
-.gs-divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
-.gs-section-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:0.8rem 1rem;background:var(--card2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:0.5rem;transition:background 0.2s;}
-.gs-section-toggle:hover{background:var(--hover-bg);}
-.gs-section-title{font-family:var(--font-display);font-size:0.9rem;font-weight:800;color:var(--brand);}
-.gs-section-body{display:none;margin-top:0.5rem;}
-.gs-section-body.open{display:block;}
-.gs-step{display:flex;gap:0.9rem;margin-bottom:1rem;align-items:flex-start;}
-.gs-step-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#00b4d8);color:#fff;font-family:var(--font-display);font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-.gs-step-text{font-size:0.83rem;color:var(--txt2);line-height:1.65;}
-.gs-step-text strong{color:var(--txt);display:block;margin-bottom:0.2rem;}
-.code-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;margin:0.75rem 0;}
-.code-header{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 1rem;background:linear-gradient(90deg,#03045e,#0077b6);color:#fff;font-size:0.75rem;font-weight:700;font-family:var(--font-display);}
-[data-theme="dark"] .code-header{background:linear-gradient(90deg,#020d2a,#0077b6);}
-.code-copy-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;padding:0.28rem 0.75rem;border-radius:50px;font-size:0.7rem;font-weight:700;cursor:pointer;transition:background 0.2s;}
-.code-copy-btn:hover{background:rgba(255,255,255,0.35);}
-.code-pre{padding:1rem;font-size:0.72rem;line-height:1.65;overflow-x:auto;color:var(--txt);font-family:monospace;white-space:pre;}
-.gs-headers-table{width:100%;border-collapse:collapse;font-size:0.75rem;margin-top:0.5rem;}
-.gs-headers-table th{background:linear-gradient(90deg,#03045e,#0077b6);color:#fff;padding:0.5rem 0.8rem;text-align:left;font-family:var(--font-display);}
-.gs-headers-table td{padding:0.4rem 0.8rem;border-bottom:1px solid var(--border);color:var(--txt2);font-size:0.73rem;}
-.gs-headers-table tr:last-child td{border-bottom:none;}
-.gs-headers-table tr:nth-child(even) td{background:var(--card2);}
 .gs-storage-note{background:var(--accent-bg);border:1px solid var(--border2);border-radius:var(--r-sm);padding:0.9rem 1rem;font-size:0.8rem;color:var(--txt2);line-height:1.65;margin-top:0.75rem;}
 .gs-storage-note strong{color:var(--accent);display:block;margin-bottom:0.2rem;}
-.gs-warning-note{background:var(--amber-light);border:1px solid rgba(245,158,11,0.3);border-radius:var(--r-sm);padding:0.8rem 1rem;font-size:0.78rem;color:#92400e;line-height:1.65;margin:0.75rem 0;}
-[data-theme="dark"] .gs-warning-note{background:rgba(245,158,11,0.12);color:#fcd34d;}
 
 /* MAIN */
 main{padding:1rem;max-width:980px;margin:0 auto;width:100%;overflow-x:hidden;}
@@ -380,8 +367,6 @@ input:focus,select:focus,textarea:focus{border-color:#00b4d8;background:var(--in
 .trip-header-sub{font-size:0.82rem;opacity:0.7;margin-top:0.2rem;}
 .btn-create-trip{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.3);color:#fff;border-radius:50px;padding:0.6rem 1.3rem;font-size:0.85rem;font-weight:700;font-family:var(--font-display);cursor:pointer;transition:all 0.2s;backdrop-filter:blur(8px);}
 .btn-create-trip:hover{background:rgba(255,255,255,0.28);}
-.events-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
-@media(max-width:600px){.events-grid{grid-template-columns:1fr;}}
 
 /* EVENT DETAIL */
 #event-detail{display:none;}
@@ -530,10 +515,10 @@ img,video,canvas{max-width:100%;height:auto;}
     <div class="intro-receipt">
       <div class="intro-receipt-label">Your Money Dashboard</div>
       <div class="intro-receipt-amt">₹ tracker</div>
-      <div class="intro-receipt-sub">Analytics · Debts · Savings · TripBook · Sheets</div>
+      <div class="intro-receipt-sub">Analytics · Debts · Savings · TripBook · Cloud Sync</div>
     </div>
     <h1 class="intro-title">Track Every Rupee,<br>Effortlessly.</h1>
-    <p class="intro-sub">All your finances, beautifully organised in one place. Your data stays private — stored securely on your device.</p>
+    <p class="intro-sub">All your finances, beautifully organised in one place. Sign in with Google for seamless cloud sync across all your devices.</p>
     <div class="intro-pills">
       <span class="pill">📊 Analytics</span>
       <span class="pill">🤝 Debts</span>
@@ -542,7 +527,7 @@ img,video,canvas{max-width:100%;height:auto;}
     </div>
     <input type="text" id="name-input" placeholder="Enter your name to begin…" maxlength="40" autocomplete="off">
     <button class="intro-btn" onclick="startAsGuest()">Get Started →</button>
-    <div class="intro-divider">or sign in for cross-device sync</div>
+    <div class="intro-divider">or sign in for cloud sync across devices</div>
     <div id="google-signed-in-info" style="display:none;"></div>
     <button class="google-btn" id="google-btn" onclick="handleGoogleSignIn()">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -551,7 +536,7 @@ img,video,canvas{max-width:100%;height:auto;}
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
       </svg>
-      Sign in with Google
+      Sign in with Google — Sync Everywhere ☁️
     </button>
     <button class="guest-btn" onclick="continueAsGuest()">👤 Continue as Guest (this device only)</button>
   </div>
@@ -572,7 +557,13 @@ img,video,canvas{max-width:100%;height:auto;}
           <span class="toggle-icon" id="theme-icon">☀️</span>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
         </div>
-        <div class="gs-pill" onclick="document.getElementById('gs-modal').classList.add('show')">
+        <!-- AUTO-SYNC INDICATOR — shown to Google users, replaces manual Sheets pill -->
+        <div class="sync-indicator guest-mode" id="sync-indicator" title="Cloud Sync Status">
+          <div class="sdot" id="sync-dot"></div>
+          <span id="sync-label">Local</span>
+        </div>
+        <!-- Hidden gs elements kept for internal sync dot compatibility -->
+        <div class="gs-pill" id="gs-pill-hidden">
           <div class="gdot" id="gs-dot"></div>
           <span id="gs-lbl">Sheets</span>
         </div>
@@ -938,13 +929,12 @@ img,video,canvas{max-width:100%;height:auto;}
         <div class="about-team-name">👑 Team Tech Royal</div>
         <div class="about-team-tagline">Engineering excellence with a royal touch</div>
         <p class="about-team-para">Team Tech Royal is a passionate collective of developers and designers who believe that great software should be both powerful and beautiful. We are dedicated to building tools that simplify everyday challenges — whether it's tracking your finances, managing projects, or automating workflows.</p>
-        <p class="about-team-para" style="margin-bottom:0;"><em style="color:var(--txt3);font-size:0.82rem;">✏️ Replace this paragraph with your own team description and member details.</em></p>
         <div class="about-tech-row">
           <span class="about-tech-pill">⚡ Vanilla JS</span>
           <span class="about-tech-pill">🎨 CSS3 Variables</span>
           <span class="about-tech-pill">📊 Chart.js</span>
           <span class="about-tech-pill">📦 LocalStorage</span>
-          <span class="about-tech-pill">📑 Google Sheets API</span>
+          <span class="about-tech-pill">☁️ Google Sheets API</span>
           <span class="about-tech-pill">🔒 Privacy-First</span>
         </div>
       </div>
@@ -955,24 +945,24 @@ img,video,canvas{max-width:100%;height:auto;}
         <div class="about-feat"><span class="about-feat-ico">🤝</span><div class="about-feat-name">Debts</div><div class="about-feat-sub">Track money lent &amp; borrowed</div></div>
         <div class="about-feat"><span class="about-feat-ico">🗺️</span><div class="about-feat-name">TripBook</div><div class="about-feat-sub">Group expense tracking for trips</div></div>
         <div class="about-feat"><span class="about-feat-ico">🌿</span><div class="about-feat-name">Savings</div><div class="about-feat-sub">Monitor your savings rate &amp; goals</div></div>
-        <div class="about-feat"><span class="about-feat-ico">🔗</span><div class="about-feat-name">Sheets Sync</div><div class="about-feat-sub">Auto-backup to Google Sheets</div></div>
+        <div class="about-feat"><span class="about-feat-ico">☁️</span><div class="about-feat-name">Auto Sync</div><div class="about-feat-sub">Cloud backup — sign in with Google</div></div>
         <div class="about-feat"><span class="about-feat-ico">🌙</span><div class="about-feat-name">Dark Mode</div><div class="about-feat-sub">Beautiful light &amp; dark themes</div></div>
-        <div class="about-feat"><span class="about-feat-ico">🔒</span><div class="about-feat-name">Private</div><div class="about-feat-sub">All data stored on your device only</div></div>
+        <div class="about-feat"><span class="about-feat-ico">🔒</span><div class="about-feat-name">Private</div><div class="about-feat-sub">Your data, never shared</div></div>
       </div>
 
       <div class="about-version-bar">
         <div class="about-ver-item"><div class="about-ver-label">Version</div><div class="about-ver-val">2.1.0</div></div>
         <div class="about-ver-item"><div class="about-ver-label">Platform</div><div class="about-ver-val">Web App</div></div>
-        <div class="about-ver-item"><div class="about-ver-label">Storage</div><div class="about-ver-val">Local + Sheets</div></div>
+        <div class="about-ver-item"><div class="about-ver-label">Storage</div><div class="about-ver-val">Local + Cloud</div></div>
         <div class="about-ver-item"><div class="about-ver-label">Currency</div><div class="about-ver-val">₹ Indian Rupee</div></div>
         <div class="about-ver-item"><div class="about-ver-label">Team</div><div class="about-ver-val">Tech Royal</div></div>
       </div>
 
       <div class="about-section">
         <div class="about-card">
-          <div class="about-card-icon">🔒</div>
-          <div class="about-card-title">Your Privacy, Always First</div>
-          <div class="about-card-text">All your financial data is stored exclusively in your browser's local storage. Nothing is sent to any server without your explicit action. Google Sheets sync is entirely optional and you control it completely.</div>
+          <div class="about-card-icon">☁️</div>
+          <div class="about-card-title">Automatic Cloud Sync</div>
+          <div class="about-card-text">Sign in with Google and your data automatically syncs to the cloud — no setup required. Access your finances from any device, anywhere. Guest mode saves locally on this device only.</div>
         </div>
         <div class="about-card">
           <div class="about-card-icon">📱</div>
@@ -995,24 +985,29 @@ img,video,canvas{max-width:100%;height:auto;}
   </main>
 </div>
 
-<!-- GS MODAL -->
+<!-- GS MODAL (hidden from users — internal use) -->
 <div class="modal-back" id="gs-modal">
   <div class="modal">
-    <h3>🔗 Google Sheets Sync</h3>
-    <p style="font-size:0.83rem;color:var(--txt2);margin-bottom:1rem;">Paste your Apps Script Web App URL below to enable automatic sync. When signed in with Google, your data syncs across all your devices.</p>
-    <div class="gs-storage-note" style="margin-bottom:1.2rem;">
-      <strong>🔒 Data is always saved locally too</strong>
-      Even without Sheets, your data is safe on this device.
+    <h3>☁️ Cloud Sync Status</h3>
+    <p>Your data automatically syncs when you sign in with Google. No setup needed!</p>
+    <div style="background:var(--accent-bg);border:1.5px solid var(--border2);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;">
+      <span style="font-size:1.5rem;">☁️</span>
+      <div>
+        <div style="font-weight:800;font-size:0.88rem;color:var(--txt);" id="sync-modal-title">Auto-Sync</div>
+        <div style="font-size:0.75rem;color:var(--txt3);margin-top:0.2rem;" id="sync-status-msg">Sign in with Google to sync across devices</div>
+      </div>
+      <div class="sdot" style="margin-left:auto;width:10px;height:10px;" id="modal-sync-dot"></div>
     </div>
-    <div class="form-group" style="margin-bottom:1.2rem;">
-      <label>Apps Script Web App URL</label>
-      <input type="url" id="gs-url-input" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:0.82rem;">
+    <div class="gs-storage-note">
+      <strong>🔒 Always saved locally too</strong>
+      Even without cloud sync, your data is safe on this device.
     </div>
-    <div id="gs-status-msg" style="font-size:0.78rem;color:var(--txt3);min-height:18px;margin-bottom:0.75rem;"></div>
+    <!-- Hidden URL input kept for internal compatibility -->
+    <input type="url" id="gs-url-input" style="display:none;">
+    <div id="gs-status-msg" style="display:none;"></div>
     <div class="modal-btns">
-      <button class="btn-ghost" onclick="document.getElementById('gs-modal').classList.remove('show')">Cancel</button>
-      <button class="btn-ghost" onclick="disconnectSheet()" style="border-color:var(--red);color:var(--red);">🔌 Disconnect</button>
-      <button class="btn-add" onclick="saveGSUrl()">Save &amp; Connect</button>
+      <button class="btn-ghost" onclick="document.getElementById('gs-modal').classList.remove('show')">Close</button>
+      <button class="btn-add" onclick="document.getElementById('gs-modal').classList.remove('show')">Got it ✓</button>
     </div>
   </div>
 </div>
@@ -1071,8 +1066,16 @@ img,video,canvas{max-width:100%;height:auto;}
 <script>
 const CAT_COLORS=['#0077b6','#03045e','#00b4d8','#90e0ef','#e05252','#00B4D8','#ec4899','#f59e0b','#06b6d4','#84cc16','#023e8a','#0096c7'];
 
-/* ── GOOGLE AUTH ── Replace with YOUR Client ID ── */
+/* ════════════════════════════════════════════════════════════════
+   ★  HARDCODED BACKEND URL — Admin-controlled, users never see it
+   ════════════════════════════════════════════════════════════════ */
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwXcum7wwctXYHxn2XBs8qtix1aiFiJIxCBOyW4vlnQGuCgYVTJBX2DKuXWBw0aoUb97g/exec';
+
+/* ── GOOGLE CLIENT ID ── */
 const GOOGLE_CLIENT_ID = '562737347036-tbdgn1vqq9p6acaor4u48i6nrgd74k8j.apps.googleusercontent.com';
+
+/* ── gsUrl always points to the hardcoded backend ── */
+let gsUrl = BACKEND_URL;
 
 /* ── PWA Service Worker ── */
 if('serviceWorker' in navigator){
@@ -1102,7 +1105,6 @@ if(tripData.families||tripData.expenses){
 }
 
 let currentTripId=null;
-let gsUrl=localStorage.getItem('pet_gs')||'';
 let period='month';
 const charts={};
 let currentTheme=localStorage.getItem('pet_theme')||'light';
@@ -1113,7 +1115,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   applyTheme(currentTheme,false);
   setToday();
   buildMonthFilter();
-  if(gsUrl){document.getElementById('gs-url-input').value=gsUrl;setGsDot('live','Connected');}
+  // gsUrl is always the hardcoded BACKEND_URL — no user setup needed
   if(googleUser&&googleUser.email){
     showGoogleSignedInInfo(googleUser);
     if(!userName) userName=googleUser.name||googleUser.email;
@@ -1136,6 +1138,17 @@ document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key===
 function setToday(){
   const t=new Date().toISOString().split('T')[0];
   ['t-date','d-date','s-date','trip-exp-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=t;});
+}
+
+/* ── SYNC INDICATOR (replaces gs-pill for users) ── */
+function setSyncIndicator(state, label) {
+  const ind = document.getElementById('sync-indicator');
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if(!ind || !dot || !lbl) return;
+  dot.className = 'sdot ' + (state || '');
+  lbl.textContent = label || 'Local';
+  ind.className = 'sync-indicator' + (state === 'live' ? ' synced' : state === 'syncing' ? ' syncing' : state === 'err' ? '' : ' guest-mode');
 }
 
 /* ── THEME ── */
@@ -1202,7 +1215,7 @@ function startGoogleSignIn(){
 function resetGoogleBtn(){
   const btn=document.getElementById('google-btn');
   if(btn){
-    btn.innerHTML=`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;flex-shrink:0"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google`;
+    btn.innerHTML=`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;flex-shrink:0"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google — Sync Everywhere ☁️`;
     btn.disabled=false;
   }
 }
@@ -1216,7 +1229,7 @@ async function fetchGoogleUserProfile(accessToken){
     localStorage.setItem('pet_google_user',JSON.stringify(googleUser));
     userName=googleUser.name;isGoogleUser=true;
     localStorage.setItem('pet_name',userName);
-    showToast('✓ Welcome, '+googleUser.name+'!');
+    showToast('✓ Welcome, '+googleUser.name+'! Syncing your data…');
     launch();
   }catch(err){
     console.error('Profile fetch error:',err);
@@ -1231,7 +1244,7 @@ function handleGoogleCredential(response){
     localStorage.setItem('pet_google_user',JSON.stringify(googleUser));
     userName=googleUser.name||googleUser.email;isGoogleUser=true;
     localStorage.setItem('pet_name',userName);
-    showToast('✓ Signed in as '+googleUser.name+'!');
+    showToast('✓ Signed in as '+googleUser.name+'! Syncing…');
     launch();
   }catch(e){showToast('⚠️ Sign-in failed. Try again.');}
 }
@@ -1240,15 +1253,16 @@ function showGoogleSignedInInfo(user){
   const initials=(user.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   el.innerHTML=`<div class="google-user-info">
     ${user.picture?`<img class="google-user-avatar" src="${user.picture}" alt="">`:`<div class="google-user-avatar-placeholder">${initials}</div>`}
-    <div><div class="google-user-name">${user.name||'Google User'}</div><div class="google-user-email">${user.email}</div></div>
+    <div><div class="google-user-name">${user.name||'Google User'}</div><div class="google-user-email">${user.email} · ☁️ Cloud Sync Active</div></div>
   </div>`;
   el.style.display='block';
   const btn=document.getElementById('google-btn');
   if(btn){
-    btn.innerHTML='✓ Continue as '+user.name.split(' ')[0]+' →';
+    btn.innerHTML='☁️ Continue as '+user.name.split(' ')[0]+' (Sync Active) →';
     btn.onclick=()=>{userName=googleUser.name||googleUser.email;isGoogleUser=true;launch();};
   }
 }
+
 function launch(){
   document.getElementById('intro').classList.add('out');
   setTimeout(()=>document.getElementById('intro').style.display='none',850);
@@ -1259,8 +1273,15 @@ function launch(){
   } else {
     chip.textContent=userName;
   }
+  // Update sync indicator
+  if(isGoogleUser&&googleUser){
+    setSyncIndicator('syncing','Syncing…');
+  } else {
+    setSyncIndicator('','Local');
+  }
   renderTracker();renderDebts();renderSavingsSummary();renderTripFolders();
-  if(isGoogleUser&&gsUrl) loadFromSheet();
+  // Auto-load from backend for ALL Google users — no setup required
+  if(isGoogleUser&&googleUser) loadFromSheet();
 }
 
 /* ── TABS ── */
@@ -1898,21 +1919,140 @@ function renderAnalytics(){
     charts.savChart=new Chart(document.getElementById('chart-savings'),{type:'doughnut',data:{labels:['Saved (Cash)','Total Expenses','Net Balance'],datasets:[{data:[totalSaved,totalExp,Math.max(0,totalIncome-totalExp)],backgroundColor:[sav,expClr,'rgba(0,180,216,0.8)'],borderWidth:2,borderColor:'transparent'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11},color:tick}}}}});}
 }
 
-/* ── GS SETUP ── */
-function saveGSUrl(){
-  const url=document.getElementById('gs-url-input').value.trim();
-  if(!url.startsWith('https://script.google.com')){showToast('⚠️ Invalid URL — must start with https://script.google.com');return;}
-  gsUrl=url;localStorage.setItem('pet_gs',gsUrl);
-  document.getElementById('gs-modal').classList.remove('show');
-  setGsDot('live','Connected');showToast('✓ Google Sheets connected!');
+/* ════════════════════════════════════════════════════════════════
+   SYNC ENGINE — All Google users auto-sync to BACKEND_URL
+   Users never configure anything. It just works.
+   ════════════════════════════════════════════════════════════════ */
+
+// ── syncSheet: push individual row event to backend ──────────────
+async function syncSheet(type, data, dotId, textId) {
+  // Only sync for Google-signed-in users
+  if (!isGoogleUser || !googleUser) return;
+  if (dotId) setSyncSt(dotId, textId, 'syncing', 'Syncing…');
+  try {
+    const userId = googleUser.email;
+    const payload = {
+      sheet: type,
+      user: userId,
+      timestamp: new Date().toISOString(),
+      ...data
+    };
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (dotId) {
+      setSyncSt(dotId, textId, 'live', 'Synced ✓');
+      setTimeout(() => setSyncSt(dotId, textId, '', ''), 3500);
+    }
+    setSyncIndicator('live', '☁️ Synced');
+    setTimeout(() => setSyncIndicator('live', '☁️'), 3000);
+  } catch (err) {
+    console.error('syncSheet error:', type, err);
+    if (dotId) setSyncSt(dotId, textId, 'err', 'Sync failed');
+    setSyncIndicator('err', 'Sync err');
+    setTimeout(() => setSyncIndicator('live', '☁️'), 5000);
+  }
 }
-function disconnectSheet(){
-  if(!confirm('Remove Google Sheets connection? Your local data will NOT be deleted.')) return;
-  gsUrl='';localStorage.removeItem('pet_gs');
-  document.getElementById('gs-url-input').value='';
-  document.getElementById('gs-modal').classList.remove('show');
-  setGsDot('','Not connected');showToast('🔌 Google Sheets disconnected');
+
+// ── loadFromSheet: pull full snapshot on Google login ────────────
+async function loadFromSheet() {
+  if (!isGoogleUser || !googleUser) return;
+  setSyncIndicator('syncing', 'Loading…');
+  try {
+    const userId = encodeURIComponent(googleUser.email);
+    const res = await fetch(BACKEND_URL + '?action=load&user=' + userId, { redirect: 'follow' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+
+    if (!json || json.status === 'error' || (!json.transactions && !json.debts && !json.savings && !json.tripData)) {
+      setSyncIndicator('live', '☁️ Ready');
+      return;
+    }
+
+    const sheetTime = json.lastSaved ? new Date(json.lastSaved).getTime() : 0;
+    const localTime = parseInt(localStorage.getItem('pet_last_save') || '0');
+    const sheetIsNewer = sheetTime > localTime;
+    const localIsEmpty = !transactions.length && !debts.length && !savings.length;
+
+    if (!sheetIsNewer && !localIsEmpty) {
+      setSyncIndicator('live', '☁️ Synced');
+      return;
+    }
+
+    let changed = false;
+    if (Array.isArray(json.transactions)) { transactions = json.transactions; localStorage.setItem('pet_tx', JSON.stringify(transactions)); changed = true; }
+    if (Array.isArray(json.debts))        { debts = json.debts; localStorage.setItem('pet_debts', JSON.stringify(debts)); changed = true; }
+    if (Array.isArray(json.savings))      { savings = json.savings; localStorage.setItem('pet_savings', JSON.stringify(savings)); changed = true; }
+    if (json.tripData && json.tripData.trips) { tripData = json.tripData; localStorage.setItem('pet_trip', JSON.stringify(tripData)); changed = true; }
+
+    if (changed) {
+      localStorage.setItem('pet_last_save', String(sheetTime || Date.now()));
+      renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
+      showToast('☁️ Data synced from cloud!');
+    }
+    setSyncIndicator('live', '☁️ Synced');
+  } catch (err) {
+    console.error('loadFromSheet error:', err);
+    setSyncIndicator('err', 'Load err');
+    showToast('⚠️ Cloud sync failed — your local data is safe.');
+    setTimeout(() => setSyncIndicator('live', '☁️'), 5000);
+  }
 }
+
+// ── save: local save + auto-push snapshot for Google users ───────
+function save() {
+  const now = Date.now();
+  localStorage.setItem('pet_tx',        JSON.stringify(transactions));
+  localStorage.setItem('pet_debts',     JSON.stringify(debts));
+  localStorage.setItem('pet_savings',   JSON.stringify(savings));
+  localStorage.setItem('pet_events',    JSON.stringify(events));
+  localStorage.setItem('pet_event_tx',  JSON.stringify(eventTx));
+  localStorage.setItem('pet_trip',      JSON.stringify(tripData));
+  localStorage.setItem('pet_last_save', String(now));
+
+  // Auto-push full snapshot for Google users — no user action needed
+  if (isGoogleUser && googleUser) {
+    setSyncIndicator('syncing', 'Saving…');
+    const payload = {
+      user: googleUser.email,
+      name: userName,
+      transactions,
+      debts,
+      savings,
+      tripData,
+      timestamp: new Date(now).toISOString()
+    };
+    fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    })
+    .then(r => {
+      if (!r.ok) { setSyncIndicator('err', 'Save err'); return; }
+      setSyncIndicator('live', '☁️ Saved');
+      setTimeout(() => setSyncIndicator('live', '☁️'), 2500);
+    })
+    .catch(err => {
+      console.error('Snapshot sync error:', err);
+      setSyncIndicator('err', 'Save err');
+      setTimeout(() => setSyncIndicator('live', '☁️'), 5000);
+    });
+  }
+}
+
+/* ── Unused but kept for compat ── */
+function saveGSUrl(){ showToast('✓ Auto-sync is always active for Google users!'); }
+function disconnectSheet(){ showToast('ℹ️ Cloud sync is managed by the app.'); }
+function setGsDot(cls,txt){
+  const d=document.getElementById('gs-dot');if(d)d.className='gdot '+(cls||'');
+  const l=document.getElementById('gs-lbl');if(l)l.textContent=txt;
+}
+
 function logoutUser(){
   if(!confirm('Log out? Your data is saved locally and will be here when you return.')) return;
   userName='';isGoogleUser=false;googleUser=null;
@@ -1923,154 +2063,17 @@ function logoutUser(){
   const infoEl=document.getElementById('google-signed-in-info');if(infoEl) infoEl.style.display='none';
   const btn=document.getElementById('google-btn');
   if(btn){
-    btn.innerHTML=`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google`;
+    btn.innerHTML=`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google — Sync Everywhere ☁️`;
     btn.onclick=handleGoogleSignIn;
   }
   showToast('👋 Logged out. See you soon!');
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  syncSheet — FIXED: removed mode:'no-cors', using text/plain
-//  Content-Type to avoid CORS preflight on Apps Script
-// ═══════════════════════════════════════════════════════════════
-async function syncSheet(type, data, dotId, textId) {
-  if (!gsUrl) return;
-  if (dotId) setSyncSt(dotId, textId, 'syncing', 'Syncing…');
-  try {
-    const userId = isGoogleUser && googleUser ? googleUser.email : userName;
-    const payload = {
-      sheet: type,
-      user: userId,
-      timestamp: new Date().toISOString(),
-      ...data
-    };
-    const res = await fetch(gsUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight
-      body: JSON.stringify(payload),
-      redirect: 'follow'
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    if (dotId) {
-      setSyncSt(dotId, textId, 'live', 'Synced ✓');
-      setTimeout(() => setSyncSt(dotId, textId, '', ''), 3500);
-    }
-  } catch (err) {
-    console.error('syncSheet error:', type, err);
-    if (dotId) setSyncSt(dotId, textId, 'err', 'Sync failed');
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  loadFromSheet — loads all data for a Google user on login
-// ═══════════════════════════════════════════════════════════════
-async function loadFromSheet() {
-  if (!gsUrl || !isGoogleUser || !googleUser) return;
-  setGsDot('syncing', 'Loading…');
-  try {
-    const userId = encodeURIComponent(googleUser.email);
-    const res = await fetch(gsUrl + '?action=load&user=' + userId, { redirect: 'follow' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-
-    // Nothing in sheet yet for this user
-    if (!json || json.status === 'error' || (!json.transactions && !json.debts && !json.savings && !json.tripData)) {
-      setGsDot('live', 'Connected');
-      return;
-    }
-
-    // Compare timestamps: use sheet data if newer OR if local is completely empty
-    const sheetTime = json.lastSaved ? new Date(json.lastSaved).getTime() : 0;
-    const localTime = parseInt(localStorage.getItem('pet_last_save') || '0');
-    const sheetIsNewer = sheetTime > localTime;
-    const localIsEmpty = !transactions.length && !debts.length && !savings.length;
-
-    if (!sheetIsNewer && !localIsEmpty) {
-      setGsDot('live', 'Connected');
-      return;
-    }
-
-    let changed = false;
-    if (Array.isArray(json.transactions)) {
-      transactions = json.transactions;
-      localStorage.setItem('pet_tx', JSON.stringify(transactions));
-      changed = true;
-    }
-    if (Array.isArray(json.debts)) {
-      debts = json.debts;
-      localStorage.setItem('pet_debts', JSON.stringify(debts));
-      changed = true;
-    }
-    if (Array.isArray(json.savings)) {
-      savings = json.savings;
-      localStorage.setItem('pet_savings', JSON.stringify(savings));
-      changed = true;
-    }
-    if (json.tripData && json.tripData.trips) {
-      tripData = json.tripData;
-      localStorage.setItem('pet_trip', JSON.stringify(tripData));
-      changed = true;
-    }
-    if (changed) {
-      localStorage.setItem('pet_last_save', String(sheetTime || Date.now()));
-      renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
-      showToast('✓ Data synced from Sheets!');
-    }
-    setGsDot('live', 'Connected');
-  } catch (err) {
-    console.error('loadFromSheet error:', err);
-    setGsDot('err', 'Load failed');
-    showToast('⚠️ Could not load from Sheets — check your URL.');
-    setTimeout(() => setGsDot('live', 'Connected'), 4000);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  save — saves locally AND sends full snapshot to Sheets
-//  FIXED: removed mode:'no-cors', using text/plain Content-Type
-// ═══════════════════════════════════════════════════════════════
-function save() {
-  const now = Date.now();
-  localStorage.setItem('pet_tx',        JSON.stringify(transactions));
-  localStorage.setItem('pet_debts',     JSON.stringify(debts));
-  localStorage.setItem('pet_savings',   JSON.stringify(savings));
-  localStorage.setItem('pet_events',    JSON.stringify(events));
-  localStorage.setItem('pet_event_tx',  JSON.stringify(eventTx));
-  localStorage.setItem('pet_trip',      JSON.stringify(tripData));
-  localStorage.setItem('pet_last_save', String(now)); // KEY: timestamp for cross-device sync
-
-  if (isGoogleUser && googleUser && gsUrl) {
-    const payload = {
-      user: googleUser.email,
-      name: userName,
-      transactions,
-      debts,
-      savings,
-      tripData,
-      timestamp: new Date(now).toISOString()
-    };
-    fetch(gsUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload),
-      redirect: 'follow'
-    })
-    .then(r => { if (!r.ok) console.error('Snapshot sync HTTP error:', r.status); })
-    .catch(err => console.error('Snapshot sync error:', err));
-  }
-}
-
+/* ── HELPERS ── */
 function setSyncSt(dotId,textId,cls,txt){
   const d=document.getElementById(dotId);if(d)d.className='gdot'+(cls?' '+cls:'');
   const t=document.getElementById(textId);if(t)t.textContent=txt;
 }
-function setGsDot(cls,txt){
-  const d=document.getElementById('gs-dot');if(d)d.className='gdot '+(cls||'');
-  const l=document.getElementById('gs-lbl');if(l)l.textContent=txt;
-  const pill=document.querySelector('.gs-pill');if(pill)pill.title=txt;
-}
-
-/* ── HELPERS ── */
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function f2(n){return Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fd(s){if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
