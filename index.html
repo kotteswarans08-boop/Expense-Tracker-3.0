@@ -398,7 +398,7 @@ input:focus,select:focus,textarea:focus{border-color:#00b4d8;background:var(--in
 .ev-sc-lbl{font-size:0.67rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:0.9px;margin-bottom:0.35rem;}
 .ev-sc-val{font-family:var(--font-display);font-size:1.4rem;font-weight:900;}
 
-/* CREATE EVENT MODAL (hidden) */
+/* CREATE EVENT MODAL */
 .type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-top:0.4rem;}
 .type-btn{border:1.5px solid var(--border);background:var(--card2);border-radius:var(--r-sm);padding:0.7rem 0.5rem;cursor:pointer;text-align:center;transition:all 0.2s;font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--txt2);}
 .type-btn.active{border-color:#00B4D8;background:var(--trip-light);color:#00B4D8;}
@@ -760,8 +760,6 @@ img,video,canvas{max-width:100%;height:auto;}
 
     <!-- ── TRIPBOOK TAB ── -->
     <div id="tab-events" class="tab">
-
-      <!-- ═══ TRIP LIST VIEW ═══ -->
       <div id="trip-list-view">
         <div class="trip-header">
           <div class="trip-header-content">
@@ -772,16 +770,13 @@ img,video,canvas{max-width:100%;height:auto;}
             <button class="btn-create-trip" onclick="openCreateTripModal()">+ New Trip</button>
           </div>
         </div>
-
         <div id="trip-folders-grid" class="trip-folders-grid"></div>
         <div id="trip-folders-empty" class="card" style="display:none;">
           <div class="empty-msg"><span class="empty-icon">🗺️</span>No trips yet.<br>Tap <strong>+ New Trip</strong> to create your first one!</div>
         </div>
       </div>
 
-      <!-- ═══ TRIP DETAIL VIEW ═══ -->
       <div id="trip-detail-view" style="display:none;">
-
         <div class="ev-detail-header no-print">
           <button class="ev-back-btn" onclick="closeTripDetail()">← All Trips</button>
           <div class="ev-name-area">
@@ -797,7 +792,6 @@ img,video,canvas{max-width:100%;height:auto;}
           <div class="ev-sum-card"><div class="ev-sc-lbl">Total Advance</div><div class="ev-sc-val" id="trip-total-adv" style="color:#0077b6">₹0.00</div></div>
         </div>
 
-        <!-- Manage Families -->
         <div class="card no-print">
           <div class="card-title" onclick="toggleTripSection('fam-section')" style="cursor:pointer;user-select:none;">
             👥 Manage Families <span style="font-size:0.72rem;color:var(--txt3);margin-left:0.4rem;" id="trip-member-count-badge">0 members</span>
@@ -817,13 +811,11 @@ img,video,canvas{max-width:100%;height:auto;}
           </div>
         </div>
 
-        <!-- Tabs: Expense / Advance -->
         <div class="subtab-row no-print">
           <button class="stab active" id="trip-tab-exp" onclick="switchTripTab('expense')">💸 Add Expense</button>
           <button class="stab" id="trip-tab-adv" onclick="switchTripTab('advance')">📥 Add Advance</button>
         </div>
 
-        <!-- ── CHANGE 1: Expense Form with Date field ── -->
         <div id="trip-expense-form" class="card no-print">
           <div class="card-title">💸 Expense Details</div>
           <div class="form-grid">
@@ -845,13 +837,11 @@ img,video,canvas{max-width:100%;height:auto;}
               <input type="number" id="trip-exp-amt" placeholder="0.00" min="0" step="0.01"></div>
             <div class="form-group"><label>Paid By</label>
               <select id="trip-exp-payer" onchange="updateAutoAdvNotice()"><option value="Common">Common Group</option></select></div>
-            <!-- DATE FIELD (Change 1) -->
             <div class="form-group"><label>Date 📅</label>
               <input type="date" id="trip-exp-date"></div>
             <div class="form-group" style="grid-column:1/-1"><label>Description (optional)</label>
               <input type="text" id="trip-exp-desc" placeholder="What was this for?"></div>
           </div>
-          <!-- Auto-advance notice (Change 3) -->
           <div id="auto-adv-notice" class="auto-adv-notice" style="display:none;">
             ⚡ Auto-advance: the payer's advance will be updated automatically
           </div>
@@ -859,7 +849,6 @@ img,video,canvas{max-width:100%;height:auto;}
           <div class="sync-row"><div class="gdot" id="sd-trip"></div><span class="sync-txt" id="st-trip"></span></div>
         </div>
 
-        <!-- Advance Form -->
         <div id="trip-advance-form" class="card no-print" style="display:none;">
           <div class="card-title">📥 Advance Contribution</div>
           <div class="form-grid">
@@ -874,7 +863,6 @@ img,video,canvas{max-width:100%;height:auto;}
           <div class="sync-row"><div class="gdot" id="sd-trip-adv"></div><span class="sync-txt" id="st-trip-adv"></span></div>
         </div>
 
-        <!-- Trip Statement -->
         <div class="card" id="trip-statement-card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;" class="no-print">
             <div class="card-title" style="margin-bottom:0;">📊 Trip Statement</div>
@@ -891,7 +879,6 @@ img,video,canvas{max-width:100%;height:auto;}
             <button class="stab" id="tview-settle" onclick="switchTripView('settlement')">Settlement</button>
           </div>
 
-          <!-- Expenses Table -->
           <div id="trip-view-expenses">
             <div style="font-size:0.8rem;font-weight:700;color:var(--txt2);margin-bottom:0.75rem;">Detailed Expenses</div>
             <div style="overflow-x:auto;">
@@ -906,7 +893,6 @@ img,video,canvas{max-width:100%;height:auto;}
             </div>
           </div>
 
-          <!-- Advances Table -->
           <div id="trip-view-advances" style="display:none;">
             <div style="font-size:0.8rem;font-weight:700;color:var(--txt2);margin-bottom:0.75rem;">Advance Payments</div>
             <div style="overflow-x:auto;">
@@ -917,7 +903,6 @@ img,video,canvas{max-width:100%;height:auto;}
             </div>
           </div>
 
-          <!-- ── CHANGE 2: Settlement Table with Common Expense column ── -->
           <div id="trip-view-settlement" style="display:none;">
             <div style="font-size:0.8rem;font-weight:700;color:var(--txt2);margin-bottom:0.75rem;">Final Settlement</div>
             <div style="overflow-x:auto;">
@@ -927,7 +912,6 @@ img,video,canvas{max-width:100%;height:auto;}
               </table>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -953,12 +937,8 @@ img,video,canvas{max-width:100%;height:auto;}
       <div class="about-team-card">
         <div class="about-team-name">👑 Team Tech Royal</div>
         <div class="about-team-tagline">Engineering excellence with a royal touch</div>
-        <p class="about-team-para">
-          Team Tech Royal is a passionate collective of developers and designers who believe that great software should be both powerful and beautiful. We are dedicated to building tools that simplify everyday challenges — whether it's tracking your finances, managing projects, or automating workflows. Our philosophy is simple: technology should serve people elegantly, not overwhelm them.
-        </p>
-        <p class="about-team-para" style="margin-bottom:0;">
-          <em style="color:var(--txt3);font-size:0.82rem;">✏️ Replace this paragraph with your own team description and member details.</em>
-        </p>
+        <p class="about-team-para">Team Tech Royal is a passionate collective of developers and designers who believe that great software should be both powerful and beautiful. We are dedicated to building tools that simplify everyday challenges — whether it's tracking your finances, managing projects, or automating workflows.</p>
+        <p class="about-team-para" style="margin-bottom:0;"><em style="color:var(--txt3);font-size:0.82rem;">✏️ Replace this paragraph with your own team description and member details.</em></p>
         <div class="about-tech-row">
           <span class="about-tech-pill">⚡ Vanilla JS</span>
           <span class="about-tech-pill">🎨 CSS3 Variables</span>
@@ -1094,7 +1074,7 @@ const CAT_COLORS=['#0077b6','#03045e','#00b4d8','#90e0ef','#e05252','#00B4D8','#
 /* ── GOOGLE AUTH ── Replace with YOUR Client ID ── */
 const GOOGLE_CLIENT_ID = '562737347036-tbdgn1vqq9p6acaor4u48i6nrgd74k8j.apps.googleusercontent.com';
 
-/* ── PWA Service Worker Registration ── */
+/* ── PWA Service Worker ── */
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('/Expense-Tracker-3.0/sw.js')
@@ -1112,6 +1092,7 @@ let savings=JSON.parse(localStorage.getItem('pet_savings')||'[]');
 let events=JSON.parse(localStorage.getItem('pet_events')||'[]');
 let eventTx=JSON.parse(localStorage.getItem('pet_event_tx')||'{}');
 let tripData=JSON.parse(localStorage.getItem('pet_trip')||'{"trips":[]}');
+
 // Migrate old single-trip format
 if(tripData.families||tripData.expenses){
   const old=tripData;
@@ -1119,6 +1100,7 @@ if(tripData.families||tripData.expenses){
     families:old.families||[],expenses:old.expenses||[],advances:old.advances||[]}]};
   localStorage.setItem('pet_trip',JSON.stringify(tripData));
 }
+
 let currentTripId=null;
 let gsUrl=localStorage.getItem('pet_gs')||'';
 let period='month';
@@ -1132,18 +1114,12 @@ window.addEventListener('DOMContentLoaded',()=>{
   setToday();
   buildMonthFilter();
   if(gsUrl){document.getElementById('gs-url-input').value=gsUrl;setGsDot('live','Connected');}
-
-  // ── STEP 1: Restore existing Google session from localStorage
   if(googleUser&&googleUser.email){
     showGoogleSignedInInfo(googleUser);
     if(!userName) userName=googleUser.name||googleUser.email;
     isGoogleUser=true;
   }
-
-  // ── STEP 3: Auto-launch if we have a saved name
   if(userName) launch();
-
-  // ── STEP 4: Init Google One Tap (for desktop sign-in prompt)
   if(GOOGLE_CLIENT_ID&&GOOGLE_CLIENT_ID!=='YOUR_CLIENT_ID'){
     try{
       google.accounts.id.initialize({
@@ -1187,23 +1163,21 @@ function continueAsGuest(){
   if(!v){document.getElementById('name-input').style.borderColor='rgba(255,100,100,0.7)';showToast('⚠️ Enter your name first');return;}
   startAsGuest();
 }
-/* ── Google Sign-In ── */
+
+/* ── GOOGLE SIGN-IN ── */
 function handleGoogleSignIn(){
-  if(!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID==='YOUR_CLIENT_ID'){
-    showToast('⚠️ Client ID not set');return;
-  }
+  if(!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID==='YOUR_CLIENT_ID'){showToast('⚠️ Client ID not set');return;}
   const btn=document.getElementById('google-btn');
   if(btn){btn.innerHTML='⏳ Opening Google…';btn.disabled=true;}
-  // If GSI library not loaded yet, wait up to 3 seconds
   waitForGoogle(0);
 }
 function waitForGoogle(attempt){
-  if(typeof google!=='undefined' && google.accounts && google.accounts.oauth2){
+  if(typeof google!=='undefined'&&google.accounts&&google.accounts.oauth2){
     startGoogleSignIn();
   } else if(attempt<15){
     setTimeout(()=>waitForGoogle(attempt+1),200);
   } else {
-    showToast('⚠️ Google library failed to load. Check internet connection.');
+    showToast('⚠️ Google library failed to load.');
     resetGoogleBtn();
   }
 }
@@ -1213,27 +1187,18 @@ function startGoogleSignIn(){
       client_id:GOOGLE_CLIENT_ID,
       scope:'email profile openid',
       callback:(resp)=>{
-        if(resp.error){
-          showToast('⚠️ Google Sign-In cancelled.');
-          resetGoogleBtn();
-          return;
-        }
+        if(resp.error){showToast('⚠️ Google Sign-In cancelled.');resetGoogleBtn();return;}
         fetchGoogleUserProfile(resp.access_token);
       },
-      error_callback:(err)=>{
-        console.error('Token client error:',err);
-        showToast('⚠️ Sign-in failed. Try again.');
-        resetGoogleBtn();
-      }
+      error_callback:(err)=>{console.error('Token client error:',err);showToast('⚠️ Sign-in failed. Try again.');resetGoogleBtn();}
     });
     tokenClient.requestAccessToken({prompt:'select_account'});
   }catch(err){
     console.error('startGoogleSignIn error:',err);
-    showToast('⚠️ Sign-in error. Refresh the page and try again.');
+    showToast('⚠️ Sign-in error. Refresh and try again.');
     resetGoogleBtn();
   }
 }
-
 function resetGoogleBtn(){
   const btn=document.getElementById('google-btn');
   if(btn){
@@ -1241,25 +1206,15 @@ function resetGoogleBtn(){
     btn.disabled=false;
   }
 }
-
 async function fetchGoogleUserProfile(accessToken){
   try{
-    const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
-      headers:{Authorization:'Bearer '+accessToken}
-    });
+    const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}});
     if(!res.ok) throw new Error('Profile fetch failed: '+res.status);
     const profile=await res.json();
     if(!profile.email) throw new Error('No email in profile');
-    
-    googleUser={
-      name:profile.name||profile.given_name||profile.email.split('@')[0]||'User',
-      email:profile.email,
-      picture:profile.picture||'',
-      sub:profile.sub||''
-    };
+    googleUser={name:profile.name||profile.given_name||profile.email.split('@')[0]||'User',email:profile.email,picture:profile.picture||'',sub:profile.sub||''};
     localStorage.setItem('pet_google_user',JSON.stringify(googleUser));
-    userName=googleUser.name;
-    isGoogleUser=true;
+    userName=googleUser.name;isGoogleUser=true;
     localStorage.setItem('pet_name',userName);
     showToast('✓ Welcome, '+googleUser.name+'!');
     launch();
@@ -1269,25 +1224,19 @@ async function fetchGoogleUserProfile(accessToken){
     resetGoogleBtn();
   }
 }
-function handleOAuthRedirect(){
-  // No redirect flow used — popup handles everything
-  return false;
-}
 function handleGoogleCredential(response){
   try{
     const payload=JSON.parse(atob(response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
     googleUser={name:payload.name||'',email:payload.email||'',picture:payload.picture||'',sub:payload.sub||''};
     localStorage.setItem('pet_google_user',JSON.stringify(googleUser));
-    userName=googleUser.name||googleUser.email;
-    isGoogleUser=true;
+    userName=googleUser.name||googleUser.email;isGoogleUser=true;
     localStorage.setItem('pet_name',userName);
     showToast('✓ Signed in as '+googleUser.name+'!');
     launch();
   }catch(e){showToast('⚠️ Sign-in failed. Try again.');}
 }
 function showGoogleSignedInInfo(user){
-  const el=document.getElementById('google-signed-in-info');
-  if(!el) return;
+  const el=document.getElementById('google-signed-in-info');if(!el) return;
   const initials=(user.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   el.innerHTML=`<div class="google-user-info">
     ${user.picture?`<img class="google-user-avatar" src="${user.picture}" alt="">`:`<div class="google-user-avatar-placeholder">${initials}</div>`}
@@ -1353,28 +1302,19 @@ function inYM(tx,ym){return tx.date&&tx.date.startsWith(ym);}
 
 /* ── CUSTOM CATEGORY ── */
 function checkCustomCat(selId,inputId){
-  const sel=document.getElementById(selId);
-  const inp=document.getElementById(inputId);
-  if(!sel||!inp) return;
-  if(sel.value==='__custom__'){inp.classList.add('show');inp.focus();}
-  else{inp.classList.remove('show');inp.value='';}
+  const sel=document.getElementById(selId);const inp=document.getElementById(inputId);if(!sel||!inp) return;
+  if(sel.value==='__custom__'){inp.classList.add('show');inp.focus();}else{inp.classList.remove('show');inp.value='';}
 }
 function getCatValue(selId,inputId){
-  const sel=document.getElementById(selId);
-  if(!sel) return 'Others';
-  if(sel.value==='__custom__'){
-    const inp=document.getElementById(inputId);
-    const v=inp?inp.value.trim():'';
-    return v||'Others';
-  }
+  const sel=document.getElementById(selId);if(!sel) return 'Others';
+  if(sel.value==='__custom__'){const inp=document.getElementById(inputId);const v=inp?inp.value.trim():'';return v||'Others';}
   return sel.value;
 }
 
 /* ── COLLAPSIBLE ── */
 function toggleCollapse(id){
   openSections[id]=!openSections[id];
-  const body=document.getElementById('body-'+id);
-  const chev=document.getElementById('chev-'+id);
+  const body=document.getElementById('body-'+id);const chev=document.getElementById('chev-'+id);
   if(body) body.classList.toggle('open',openSections[id]);
   if(chev) chev.classList.toggle('open',openSections[id]);
 }
@@ -1393,7 +1333,7 @@ function addTransaction(){
   const tx={id:Date.now(),amount,desc,type,method,category:cat,date,user:userName};
   transactions.push(tx);save();renderTracker();clearTxForm();
   showToast('✓ Transaction added!');
-  syncSheet('tracker',tx,'sd-t','st-t');
+  syncSheet('transaction',{...tx,timestamp:new Date().toISOString()},'sd-t','st-t');
 }
 function clearTxForm(){
   document.getElementById('t-amount').value='';
@@ -1405,10 +1345,7 @@ function clearTxForm(){
   if(custInp){custInp.value='';custInp.classList.remove('show');}
   setToday();
 }
-function deleteTx(id){
-  transactions=transactions.filter(t=>t.id!==id);
-  save();renderTracker();showToast('🗑 Deleted');
-}
+function deleteTx(id){transactions=transactions.filter(t=>t.id!==id);save();renderTracker();showToast('🗑 Deleted');}
 
 function renderTxItem(t){
   const isDebt=t.isDebt;
@@ -1430,8 +1367,7 @@ function renderTxItem(t){
 }
 
 function renderTracker(){
-  const ym=getYM();
-  if(!ym) return;
+  const ym=getYM();if(!ym) return;
   const f=transactions.filter(t=>inYM(t,ym));
   const inc=f.filter(t=>t.type==='Income'),exp=f.filter(t=>t.type==='Expense');
   const tI=inc.reduce((s,t)=>s+t.amount,0),tE=exp.reduce((s,t)=>s+t.amount,0);
@@ -1441,34 +1377,23 @@ function renderTracker(){
   const totalIncome=transactions.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0);
   const totalSaved=savings.reduce((s,sv)=>s+sv.amount,0);
   const sr=totalIncome>0?Math.round((totalSaved/(totalIncome+totalSaved))*100):0;
-
   document.getElementById('sum-income').textContent='₹'+f2(tI);
   document.getElementById('sum-expense').textContent='₹'+f2(tE);
   const balEl=document.getElementById('sum-balance');
-  balEl.textContent='₹'+f2(Math.abs(bal));
-  balEl.style.color=bal>=0?'#0077b6':'var(--red)';
+  balEl.textContent='₹'+f2(Math.abs(bal));balEl.style.color=bal>=0?'#0077b6':'var(--red)';
   document.getElementById('sum-inc-c').textContent=inc.length+' transactions';
   document.getElementById('sum-exp-c').textContent=exp.length+' transactions';
   document.getElementById('sum-sav').textContent='Savings rate: '+sr+'%';
   document.getElementById('sum-savings').textContent='₹'+f2(tS);
   document.getElementById('sum-sav-c').textContent=ymSavings.length+' entries this month';
-
   const sorted=[...f].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const incItems=sorted.filter(t=>t.type==='Income');
   const expItems=sorted.filter(t=>t.type==='Expense');
   const list=document.getElementById('tx-list');
-
-  if(!f.length){
-    list.innerHTML='<div class="empty-msg"><span class="empty-icon">🧾</span>No transactions this month.</div>';
-    return;
-  }
-
+  if(!f.length){list.innerHTML='<div class="empty-msg"><span class="empty-icon">🧾</span>No transactions this month.</div>';return;}
   if(openSections['tx-exp']===undefined) openSections['tx-exp']=true;
   if(openSections['tx-inc']===undefined) openSections['tx-inc']=true;
-
-  const expOpen=openSections['tx-exp'];
-  const incOpen=openSections['tx-inc'];
-
+  const expOpen=openSections['tx-exp'];const incOpen=openSections['tx-inc'];
   list.innerHTML=`
     <div class="collapse-section">
       <div class="collapse-header" onclick="toggleCollapse('tx-exp')">
@@ -1500,7 +1425,7 @@ function addSaving(){
   const sv={id:Date.now(),amount,date,note,user:userName};
   savings.push(sv);save();renderSavingsSummary();renderTracker();clearSavForm();
   showToast('✓ Savings entry added!');
-  syncSheet('savings',sv,'sd-s','st-s');
+  syncSheet('savings',{...sv,timestamp:new Date().toISOString()},'sd-s','st-s');
 }
 function clearSavForm(){document.getElementById('s-amount').value='';document.getElementById('s-note').value='';setToday();}
 function deleteSaving(id){savings=savings.filter(s=>s.id!==id);save();renderSavingsSummary();renderTracker();showToast('🗑 Deleted');}
@@ -1540,7 +1465,6 @@ function addDebt(){
   if(!name){showToast('⚠️ Enter person name');return;}
   if(!amount||amount<=0){showToast('⚠️ Enter valid amount');return;}
   if(!date){showToast('⚠️ Pick a date');return;}
-
   const debt={id:Date.now(),name,amount,type,date,note,status:'pending',returnDate:null,user:userName,txId:null};
   const autoTxId=Date.now()+1;
   let autoTx;
@@ -1550,11 +1474,10 @@ function addDebt(){
     autoTx={id:autoTxId,amount,desc:'Borrowed from '+name+(note?' ('+note+')':''),type:'Income',method:'Cash',category:'Debt',date,user:userName,isDebt:true,debtId:debt.id};
   }
   debt.txId=autoTxId;
-  transactions.push(autoTx);
-  debts.push(debt);
+  transactions.push(autoTx);debts.push(debt);
   save();renderDebts();renderTracker();clearDebtForm();
   showToast('✓ Debt added & linked to Tracker!');
-  syncSheet('debt',debt,'sd-d','st-d');
+  syncSheet('debt',{...debt,timestamp:new Date().toISOString()},'sd-d','st-d');
 }
 function clearDebtForm(){
   document.getElementById('d-name').value='';document.getElementById('d-amount').value='';
@@ -1571,7 +1494,7 @@ function markReturned(id){
   }
   transactions.push(returnTx);
   save();renderDebts();renderTracker();showToast('✓ Marked as returned — added to Tracker!');
-  syncSheet('debt_update',d,'sd-d','st-d');
+  syncSheet('debt_update',{...d,timestamp:new Date().toISOString()},'sd-d','st-d');
 }
 function deleteDebt(id){
   const d=debts.find(x=>x.id===id);
@@ -1611,20 +1534,17 @@ function renderDebts(){
 }
 
 /* ═══════════════════════════════════════
-   TRIPBOOK PRO — MULTI-TRIP SYSTEM
+   TRIPBOOK PRO
    ═══════════════════════════════════════ */
-
 function currentTrip(){return tripData.trips.find(t=>t.id===currentTripId)||null;}
 const TRIP_EMOJIS=['✈️','🏖','🏔','🛕','🌴','🎉','🚗','🏕','🌊','🎡','🛤','🏙'];
 
-/* ── Auto-advance notice (Change 3 helper) ── */
 function updateAutoAdvNotice(){
   const payer=document.getElementById('trip-exp-payer').value;
   const notice=document.getElementById('auto-adv-notice');
   if(notice) notice.style.display=(payer&&payer!=='Common')?'inline-flex':'none';
 }
 
-/* ── Trip List ── */
 function renderTripFolders(){
   const grid=document.getElementById('trip-folders-grid');
   const empty=document.getElementById('trip-folders-empty');
@@ -1661,57 +1581,47 @@ function openTripDetail(id){
   document.getElementById('trip-detail-meta').textContent=`📅 ${t.days} day${t.days>1?'s':''} · 👥 ${(t.families||[]).reduce((s,f)=>s+f.count,0)} members`;
   document.getElementById('print-trip-name-header').textContent=(t.emoji||'✈️')+' '+t.name+' — Trip Statement';
   document.getElementById('print-trip-meta-header').textContent=`${t.days} day${t.days>1?'s':''}  ·  Printed: ${new Date().toLocaleDateString('en-IN')}`;
-  // Set today's date in expense form
   setToday();
-  switchTripTab('expense');
-  switchTripView('expenses');
+  switchTripTab('expense');switchTripView('expenses');
   renderTripDetail();
 }
-
 function closeTripDetail(){
   currentTripId=null;
   document.getElementById('trip-detail-view').style.display='none';
   document.getElementById('trip-list-view').style.display='block';
   renderTripFolders();
 }
-
 function deleteTrip(id){
   if(!confirm('Delete this trip and all its data?')) return;
   tripData.trips=tripData.trips.filter(t=>t.id!==id);
   save();renderTripFolders();showToast('🗑 Trip deleted');
 }
 
-/* ── Create Trip Modal ── */
+let selectedTripEmoji='✈️';
 function openCreateTripModal(){
   document.getElementById('create-trip-modal').classList.add('show');
-  document.getElementById('ct-name').value='';
-  document.getElementById('ct-days').value='';
+  document.getElementById('ct-name').value='';document.getElementById('ct-days').value='';
   const rnd=TRIP_EMOJIS[Math.floor(Math.random()*TRIP_EMOJIS.length)];
   document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.toggle('active',b.dataset.e===rnd));
   selectedTripEmoji=rnd;
 }
-let selectedTripEmoji='✈️';
 function selectTripEmoji(btn){
   document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  selectedTripEmoji=btn.dataset.e;
+  btn.classList.add('active');selectedTripEmoji=btn.dataset.e;
 }
 function createNewTrip(){
   const name=document.getElementById('ct-name').value.trim();
   const days=parseInt(document.getElementById('ct-days').value)||1;
   if(!name){showToast('⚠️ Enter a trip name');return;}
   const trip={id:Date.now(),name,days,emoji:selectedTripEmoji,families:[],expenses:[],advances:[]};
-  tripData.trips.push(trip);
-  save();
+  tripData.trips.push(trip);save();
   document.getElementById('create-trip-modal').classList.remove('show');
   showToast('✓ Trip created!');
   openTripDetail(trip.id);
 }
 
-/* ── Within a Trip ── */
 function toggleTripSection(id){
-  const el=document.getElementById(id);
-  const chev=document.getElementById(id+'-chev');
+  const el=document.getElementById(id);const chev=document.getElementById(id+'-chev');
   const isOpen=el.style.display!=='none';
   el.style.display=isOpen?'none':'block';
   if(chev) chev.textContent=isOpen?'▼':'▲';
@@ -1738,8 +1648,7 @@ function addTripFamily(){
   if(!count||count<1){showToast('⚠️ Enter member count');return;}
   if(t.families.find(f=>f.name.toLowerCase()===name.toLowerCase())){showToast('⚠️ Family already exists');return;}
   t.families.push({id:Date.now(),name,count});
-  document.getElementById('trip-fname').value='';
-  document.getElementById('trip-fcount').value='';
+  document.getElementById('trip-fname').value='';document.getElementById('trip-fcount').value='';
   save();renderTripDetail();showToast('✓ Family added!');
   syncSheet('trip_family',{id:Date.now(),tripName:t.name,familyName:name,count,user:userName,timestamp:new Date().toISOString()},'','');
 }
@@ -1749,12 +1658,6 @@ function removeTripFamily(id){
   save();renderTripDetail();showToast('🗑 Family removed');
 }
 
-/* ══════════════════════════════════════════════
-   CHANGE 3: addTripExpense — auto-advance logic
-   When payer is a named family (not "Common"):
-   - Expense is recorded as Common (for fair split)
-   - Auto-add an advance entry for that family
-   ══════════════════════════════════════════════ */
 function addTripExpense(){
   const t=currentTrip();if(!t) return;
   const amt=parseFloat(document.getElementById('trip-exp-amt').value);
@@ -1762,42 +1665,23 @@ function addTripExpense(){
   const cat=getCatValue('trip-exp-cat','trip-exp-custom');
   const payer=document.getElementById('trip-exp-payer').value;
   const desc=document.getElementById('trip-exp-desc').value.trim();
-
-  // CHANGE 1: Use manual date field; fall back to today
   const dateVal=document.getElementById('trip-exp-date').value;
-  const dateLabel=dateVal
-    ? new Date(dateVal+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
-    : new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const dateLabel=dateVal?new Date(dateVal+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
   const timeStr=new Date().toLocaleString('en-IN',{hour:'2-digit',minute:'2-digit'});
   const time=dateLabel+' '+timeStr;
-
-  // Store expense always as "Common" for fair per-person split
   const entry={id:Date.now(),time,cat,payer:'Common',desc,amt,originalPayer:payer};
   t.expenses.push(entry);
-
-  // CHANGE 3: If a named family paid, auto-add advance for them
-  if(payer && payer!=='Common'){
+  if(payer&&payer!=='Common'){
     const advId=Date.now()+1;
-    const advEntry={
-      id:advId,
-      time,
-      payer:payer,
-      amt:amt,
-      desc:(desc?desc+' — ':'')+'[Auto: paid expense]',
-      autoGenerated:true
-    };
+    const advEntry={id:advId,time,payer:payer,amt:amt,desc:(desc?desc+' — ':'')+'[Auto: paid expense]',autoGenerated:true};
     t.advances.push(advEntry);
     syncSheet('trip_advance',{...advEntry,tripName:t.name,user:userName,timestamp:new Date().toISOString()},'sd-trip','st-trip');
     showToast(`✓ Expense saved! Auto-advance added for ${payer}`);
   } else {
     showToast('✓ Expense saved!');
   }
-
-  document.getElementById('trip-exp-amt').value='';
-  document.getElementById('trip-exp-desc').value='';
-  // Reset date to today
-  setToday();
-  save();renderTripDetail();
+  document.getElementById('trip-exp-amt').value='';document.getElementById('trip-exp-desc').value='';
+  setToday();save();renderTripDetail();
   syncSheet('trip_expense',{...entry,tripName:t.name,user:userName,timestamp:new Date().toISOString()},'sd-trip','st-trip');
 }
 
@@ -1811,8 +1695,7 @@ function addTripAdvance(){
   const time=new Date().toLocaleString('en-IN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
   const entry={id:Date.now(),time,payer,amt,desc};
   t.advances.push(entry);
-  document.getElementById('trip-adv-amt').value='';
-  document.getElementById('trip-adv-desc').value='';
+  document.getElementById('trip-adv-amt').value='';document.getElementById('trip-adv-desc').value='';
   save();renderTripDetail();showToast('✓ Advance saved!');
   syncSheet('trip_advance',{...entry,tripName:t.name,user:userName,timestamp:new Date().toISOString()},'sd-trip-adv','st-trip-adv');
 }
@@ -1820,10 +1703,8 @@ function addTripAdvance(){
 function deleteTripItem(type,id){
   const t=currentTrip();if(!t) return;
   if(type==='e'){
-    // If this expense had an auto-advance, also remove it
     const exp=t.expenses.find(x=>x.id===id);
-    if(exp && exp.originalPayer && exp.originalPayer!=='Common'){
-      // Remove the auto-generated advance linked to this expense (same time + payer)
+    if(exp&&exp.originalPayer&&exp.originalPayer!=='Common'){
       t.advances=t.advances.filter(a=>!(a.autoGenerated&&a.payer===exp.originalPayer&&a.time===exp.time));
     }
     t.expenses=t.expenses.filter(x=>x.id!==id);
@@ -1835,57 +1716,39 @@ function deleteTripItem(type,id){
 
 function renderTripDetail(){
   const t=currentTrip();if(!t) return;
-  const families=t.families||[];
-  const expenses=t.expenses||[];
-  const advances=t.advances||[];
+  const families=t.families||[];const expenses=t.expenses||[];const advances=t.advances||[];
   const totalMembers=families.reduce((s,f)=>s+f.count,0);
   const totalExp=expenses.reduce((s,e)=>s+e.amt,0);
   const totalAdv=advances.reduce((s,a)=>s+a.amt,0);
   const cpp=totalMembers>0?totalExp/totalMembers:0;
-
-  // Summary strip
   document.getElementById('trip-total-exp').textContent='₹'+f2(totalExp);
   document.getElementById('trip-cpp').textContent='₹'+f2(cpp);
   document.getElementById('trip-total-adv').textContent='₹'+f2(totalAdv);
   document.getElementById('trip-member-count-badge').textContent=totalMembers+' member'+(totalMembers!==1?'s':'');
   document.getElementById('trip-detail-meta').textContent=`📅 ${t.days} day${t.days>1?'s':''} · 👥 ${totalMembers} member${totalMembers!==1?'s':''}`;
-
-  // Family tags
   const famList=document.getElementById('trip-fam-list');
   famList.innerHTML=families.length?families.map(f=>`<div class="trip-fam-tag">
     ${esc(f.name)} <span style="color:var(--txt3);font-weight:400;">(×${f.count})</span>
     <button onclick="removeTripFamily(${f.id})" title="Remove">✖</button>
   </div>`).join(''):'<span style="color:var(--txt3);font-size:0.8rem;">No families added yet.</span>';
-
-  // Payer dropdowns
   const expPayer=document.getElementById('trip-exp-payer');
   const advPayer=document.getElementById('trip-adv-payer');
   const prevE=expPayer.value,prevA=advPayer.value;
   expPayer.innerHTML='<option value="Common">Common Group</option>'+families.map(f=>`<option value="${esc(f.name)}">${esc(f.name)}</option>`).join('');
   advPayer.innerHTML='<option value="" disabled>Select Family</option>'+families.map(f=>`<option value="${esc(f.name)}">${esc(f.name)}</option>`).join('');
-  if(prevE) expPayer.value=prevE;
-  if(prevA) advPayer.value=prevA;
-  // Refresh notice
+  if(prevE) expPayer.value=prevE;if(prevA) advPayer.value=prevA;
   updateAutoAdvNotice();
-
-  // Expense table — show originalPayer if named family paid
   document.getElementById('trip-exp-body').innerHTML=expenses.length?expenses.map(e=>`<tr>
     <td>${esc(e.time)}</td>
-    <td>${e.originalPayer&&e.originalPayer!=='Common'
-      ?`<span style="color:var(--inc-color);font-weight:700;">${esc(e.originalPayer)}</span> <span style="font-size:0.68rem;color:var(--txt3);">(paid)</span>`
-      :'Common'}</td>
+    <td>${e.originalPayer&&e.originalPayer!=='Common'?`<span style="color:var(--inc-color);font-weight:700;">${esc(e.originalPayer)}</span> <span style="font-size:0.68rem;color:var(--txt3);">(paid)</span>`:'Common'}</td>
     <td>${esc(e.cat)}</td>
     <td>₹${f2(e.amt)}</td>
     <td>${esc(e.desc||'—')}</td>
     <td class="no-print"><button onclick="deleteTripItem('e',${e.id})" style="border:none;color:var(--red);cursor:pointer;background:none;font-size:1rem;">✖</button></td>
   </tr>`).join(''):'<tr><td colspan="6" class="trip-empty-row">No expenses yet.</td></tr>';
-
-  // Share per person totals
   document.getElementById('trip-exp-total-disp').textContent=f2(totalExp);
   document.getElementById('trip-share-per-person').textContent=f2(cpp);
   document.getElementById('trip-spp-note').textContent=totalMembers>0?`(₹${f2(totalExp)} ÷ ${totalMembers} persons)`:'(add families to calculate)';
-
-  // Advance table — mark auto-generated entries
   document.getElementById('trip-adv-body').innerHTML=advances.length?advances.map(a=>`<tr>
     <td>${esc(a.time)}</td>
     <td>${esc(a.payer)}${a.autoGenerated?` <span style="font-size:0.65rem;background:rgba(0,180,216,0.15);color:#0077b6;border-radius:50px;padding:0.1rem 0.45rem;font-weight:700;">auto</span>`:''}</td>
@@ -1893,32 +1756,14 @@ function renderTripDetail(){
     <td>₹${f2(a.amt)}</td>
     <td class="no-print"><button onclick="deleteTripItem('a',${a.id})" style="border:none;color:var(--red);cursor:pointer;background:none;font-size:1rem;">✖</button></td>
   </tr>`).join(''):'<tr><td colspan="5" class="trip-empty-row">No advances yet.</td></tr>';
-
-  /* ══════════════════════════════════
-     CHANGE 2: Settlement with Common Expense column
-     "Common Expense" = total expense amount paid by that family
-     (stored in originalPayer field of expense entries)
-     ══════════════════════════════════ */
   const settleBody=document.getElementById('trip-settle-body');
-  if(!families.length){
-    settleBody.innerHTML='<tr><td colspan="6" class="trip-empty-row">Add families to see settlement.</td></tr>';
-  } else {
+  if(!families.length){settleBody.innerHTML='<tr><td colspan="6" class="trip-empty-row">Add families to see settlement.</td></tr>';}
+  else{
     settleBody.innerHTML=families.map(f=>{
       const paid=advances.filter(a=>a.payer===f.name).reduce((s,a)=>s+a.amt,0);
-      const target=cpp*f.count;
-      const bal=target-paid;
-
-      // CHANGE 2: sum of expenses where this family was the originalPayer
-      const commonExpense=expenses
-        .filter(e=>e.originalPayer===f.name)
-        .reduce((s,e)=>s+e.amt,0);
-
-      let balHtml=Math.abs(bal)<0.5
-        ?`<span class="settle-ok">✓ Settled</span>`
-        :bal>0
-          ?`<span class="settle-pay">Pay ₹${f2(bal)}</span>`
-          :`<span class="settle-refund">Refund ₹${f2(Math.abs(bal))}</span>`;
-
+      const target=cpp*f.count;const bal=target-paid;
+      const commonExpense=expenses.filter(e=>e.originalPayer===f.name).reduce((s,e)=>s+e.amt,0);
+      let balHtml=Math.abs(bal)<0.5?`<span class="settle-ok">✓ Settled</span>`:bal>0?`<span class="settle-pay">Pay ₹${f2(bal)}</span>`:`<span class="settle-refund">Refund ₹${f2(Math.abs(bal))}</span>`;
       return`<tr>
         <td><strong>${esc(f.name)}</strong></td>
         <td>${f.count}</td>
@@ -1931,39 +1776,19 @@ function renderTripDetail(){
   }
 }
 
-/* ── Print ── */
 function printTripStatement(){
-  const t=currentTrip();
-  if(!t){showToast('⚠️ No trip open');return;}
-  const views=['expenses','advances','settlement'];
-  const prevVis={};
-  views.forEach(v=>{
-    const el=document.getElementById('trip-view-'+v);
-    prevVis[v]=el.style.display;
-    el.style.display='block';
-  });
+  const t=currentTrip();if(!t){showToast('⚠️ No trip open');return;}
+  const views=['expenses','advances','settlement'];const prevVis={};
+  views.forEach(v=>{const el=document.getElementById('trip-view-'+v);prevVis[v]=el.style.display;el.style.display='block';});
   window.print();
-  setTimeout(()=>views.forEach(v=>{
-    document.getElementById('trip-view-'+v).style.display=prevVis[v];
-  }),500);
+  setTimeout(()=>views.forEach(v=>{document.getElementById('trip-view-'+v).style.display=prevVis[v];}),500);
 }
 
-/* ── Calculator ── */
-function toggleCalcModal(show){
-  document.getElementById('calc-modal').classList.toggle('show',show);
-}
-function cIn(v){
-  const s=document.getElementById('calc-screen');
-  if(s.value==='Err') s.value='';
-  s.value+=v;
-}
-function evalCalc(){
-  const s=document.getElementById('calc-screen');
-  try{s.value=Function('"use strict";return ('+s.value+')')();}catch{s.value='Err';}
-}
-document.addEventListener('click',e=>{
-  if(e.target===document.getElementById('calc-modal')) toggleCalcModal(false);
-});
+/* ── CALCULATOR ── */
+function toggleCalcModal(show){document.getElementById('calc-modal').classList.toggle('show',show);}
+function cIn(v){const s=document.getElementById('calc-screen');if(s.value==='Err') s.value='';s.value+=v;}
+function evalCalc(){const s=document.getElementById('calc-screen');try{s.value=Function('"use strict";return ('+s.value+')')();}catch{s.value='Err';}}
+document.addEventListener('click',e=>{if(e.target===document.getElementById('calc-modal')) toggleCalcModal(false);});
 
 /* ── ANALYTICS ── */
 function setAnPeriod(p,btn){
@@ -1999,13 +1824,7 @@ function killChart(k){
 }
 function getChartColors(){
   const dark=document.documentElement.getAttribute('data-theme')==='dark';
-  return{
-    grid:dark?'rgba(0,180,216,0.08)':'rgba(0,119,182,0.07)',
-    tick:dark?'#90e0ef':'#0077b6',
-    inc:dark?'rgba(0,180,216,0.85)':'rgba(3,4,94,0.85)',
-    exp:'rgba(224,82,82,0.85)',
-    sav:dark?'rgba(0,180,216,0.8)':'rgba(0,119,182,0.85)'
-  };
+  return{grid:dark?'rgba(0,180,216,0.08)':'rgba(0,119,182,0.07)',tick:dark?'#90e0ef':'#0077b6',inc:dark?'rgba(0,180,216,0.85)':'rgba(3,4,94,0.85)',exp:'rgba(224,82,82,0.85)',sav:dark?'rgba(0,180,216,0.8)':'rgba(0,119,182,0.85)'};
 }
 function renderAnalytics(){
   const{data:f,label}=getFiltered();
@@ -2021,7 +1840,6 @@ function renderAnalytics(){
   const cats={};exps.forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
   const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
   const{grid,tick,inc,exp:expClr,sav}=getChartColors();
-
   document.getElementById('as-spent').textContent='₹'+f2(tE);
   document.getElementById('as-avg').textContent='₹'+f2(tE/uniqD);
   document.getElementById('as-cat').textContent=topCat?topCat[0]:'—';
@@ -2029,7 +1847,6 @@ function renderAnalytics(){
   document.getElementById('as-sav').textContent=sr+'%';
   document.getElementById('as-sav').style.color=sr>=0?'#0077b6':'var(--red)';
   document.getElementById('as-sv').innerHTML=sr>=20?'<span class="up">Healthy ✓</span>':sr>=0?'<span style="color:var(--amber)">Room to improve</span>':'<span class="dn">Overspending</span>';
-
   const ir=document.getElementById('insight-row');const ins=[];
   if(topCat) ins.push({ico:'🔥',lbl:'Biggest Spend',val:topCat[0]+' — ₹'+f2(topCat[1]),cls:''});
   const methods={};exps.forEach(t=>{methods[t.method]=(methods[t.method]||0)+t.amount;});
@@ -2040,38 +1857,30 @@ function renderAnalytics(){
   else if(tI>0) ins.push({ico:'✅',lbl:'Saved This Period',val:'₹'+f2(tI-tE),cls:''});
   else ins.push({ico:'📭',lbl:'No Data',val:'Add some transactions!',cls:''});
   ir.innerHTML=ins.slice(0,3).map(i=>`<div class="ins-card ${i.cls}"><span class="ins-ico">${i.ico}</span><div class="ins-lbl">${i.lbl}</div><div class="ins-val">${i.val}</div></div>`).join('');
-
   const baseOpts=(axis='y')=>({responsive:true,plugins:{legend:{display:false}},scales:{[axis]:{beginAtZero:true,ticks:{callback:v=>'₹'+v,color:tick},grid:{color:grid}},[axis==='y'?'x':'y']:{grid:{display:false},ticks:{color:tick}}}});
-
   killChart('bar');
   charts.bar=new Chart(document.getElementById('chart-bar'),{type:'bar',data:{labels:['Income','Expense'],datasets:[{data:[tI,tE],backgroundColor:[inc,expClr],borderRadius:14,borderSkipped:false}]},options:{...baseOpts(),plugins:{legend:{display:false}}}});
-
   const mKeys=Object.keys(methods);killChart('pie');
   if(!mKeys.length){document.getElementById('pie-empty').style.display='block';document.getElementById('chart-pie').style.display='none';}
   else{document.getElementById('pie-empty').style.display='none';document.getElementById('chart-pie').style.display='block';
     charts.pie=new Chart(document.getElementById('chart-pie'),{type:'doughnut',data:{labels:mKeys,datasets:[{data:mKeys.map(k=>methods[k]),backgroundColor:CAT_COLORS,borderWidth:2,borderColor:'transparent'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11},color:tick}}}}});}
-
   const dayMap={};exps.forEach(t=>{dayMap[t.date]=(dayMap[t.date]||0)+t.amount;});
   const dKeys=Object.keys(dayMap).sort();killChart('line');
   charts.line=new Chart(document.getElementById('chart-line'),{type:'line',data:{labels:dKeys.map(d=>d.slice(5)),datasets:[{label:'Expenses',data:dKeys.map(k=>dayMap[k]),fill:true,borderColor:expClr,backgroundColor:'rgba(224,82,82,0.06)',tension:0.4,pointRadius:5,pointBackgroundColor:expClr,borderWidth:2.5}]},options:{...baseOpts(),plugins:{legend:{display:false}}}});
-
   const cKeys=Object.keys(cats).sort((a,b)=>cats[b]-cats[a]);const maxC=cKeys.length?cats[cKeys[0]]:1;
   const cbars=document.getElementById('cat-bars'),cempty=document.getElementById('cat-empty');
   if(!cKeys.length){cempty.style.display='block';cbars.innerHTML='';}
   else{cempty.style.display='none';cbars.innerHTML=cKeys.map((k,i)=>`<div class="catbar"><div class="catbar-lbl">${k}</div><div class="catbar-track"><div class="catbar-fill" style="width:${(cats[k]/maxC*100).toFixed(1)}%;background:${CAT_COLORS[i%CAT_COLORS.length]}"></div></div><div class="catbar-amt">₹${f2(cats[k])}</div></div>`).join('');}
-
   const now=new Date();const m6=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return{ym:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,lbl:d.toLocaleString('default',{month:'short'})};});
   killChart('monthly');
   charts.monthly=new Chart(document.getElementById('chart-monthly'),{type:'line',data:{labels:m6.map(m=>m.lbl),datasets:[
     {label:'Income',data:m6.map(m=>transactions.filter(t=>inYM(t,m.ym)&&t.type==='Income').reduce((s,t)=>s+t.amount,0)),borderColor:inc,backgroundColor:'rgba(3,4,94,0.07)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:inc,borderWidth:2},
     {label:'Expense',data:m6.map(m=>transactions.filter(t=>inYM(t,m.ym)&&t.type==='Expense').reduce((s,t)=>s+t.amount,0)),borderColor:expClr,backgroundColor:'rgba(224,82,82,0.07)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:expClr,borderWidth:2}
   ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11},color:tick}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'₹'+v,color:tick},grid:{color:grid}},x:{grid:{display:false},ticks:{color:tick}}}}});
-
   killChart('polar');
   if(!tI&&!tE){document.getElementById('polar-empty').style.display='block';document.getElementById('chart-polar').style.display='none';}
   else{document.getElementById('polar-empty').style.display='none';document.getElementById('chart-polar').style.display='block';
     charts.polar=new Chart(document.getElementById('chart-polar'),{type:'polarArea',data:{labels:['Income','Expenses','Balance'],datasets:[{data:[tI,tE,Math.max(0,tI-tE)],backgroundColor:[inc,'rgba(224,82,82,0.7)','rgba(0,180,216,0.7)'],borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11},color:tick}}}}});}
-
   const totLent=debts.filter(d=>d.type==='lent').reduce((s,d)=>s+d.amount,0);
   const totBorr=debts.filter(d=>d.type==='borrowed').reduce((s,d)=>s+d.amount,0);
   const totRetL=debts.filter(d=>d.type==='lent'&&d.status==='returned').reduce((s,d)=>s+d.amount,0);
@@ -2080,7 +1889,6 @@ function renderAnalytics(){
   if(!totLent&&!totBorr){document.getElementById('debt-chart-empty').style.display='block';document.getElementById('chart-debt').style.display='none';}
   else{document.getElementById('debt-chart-empty').style.display='none';document.getElementById('chart-debt').style.display='block';
     charts.debt=new Chart(document.getElementById('chart-debt'),{type:'bar',data:{labels:['Lent (Pending)','Lent (Returned)','Borrowed (Pending)','Borrowed (Returned)'],datasets:[{data:[totLent-totRetL,totRetL,totBorr-totRetB,totRetB],backgroundColor:['rgba(0,119,182,0.85)','rgba(0,180,216,0.5)','rgba(224,82,82,0.85)','rgba(224,82,82,0.4)'],borderRadius:8,borderSkipped:false}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{callback:v=>'₹'+v,color:tick},grid:{color:grid}},y:{grid:{display:false},ticks:{color:tick}}}}});}
-
   if(charts['savChart']){try{charts['savChart'].destroy();}catch(e){}delete charts['savChart'];}
   const savCanvas=document.getElementById('chart-savings');
   if(savCanvas){const fc=document.createElement('canvas');fc.id='chart-savings';fc.setAttribute('height','200');savCanvas.parentNode.replaceChild(fc,savCanvas);}
@@ -2091,19 +1899,6 @@ function renderAnalytics(){
 }
 
 /* ── GS SETUP ── */
-function toggleGsInstr(){
-  const body=document.getElementById('gs-instr-body');
-  const chev=document.getElementById('gs-instr-chev');
-  const isOpen=body.classList.contains('open');
-  body.classList.toggle('open',!isOpen);
-  chev.textContent=isOpen?'▼':'▲';
-}
-function copyCode(){
-  const code=document.getElementById('apps-script-code').textContent;
-  navigator.clipboard.writeText(code).then(()=>showToast('📋 Code copied!')).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('📋 Code copied!');
-  });
-}
 function saveGSUrl(){
   const url=document.getElementById('gs-url-input').value.trim();
   if(!url.startsWith('https://script.google.com')){showToast('⚠️ Invalid URL — must start with https://script.google.com');return;}
@@ -2121,17 +1916,11 @@ function disconnectSheet(){
 function logoutUser(){
   if(!confirm('Log out? Your data is saved locally and will be here when you return.')) return;
   userName='';isGoogleUser=false;googleUser=null;
-  localStorage.removeItem('pet_name');
-  localStorage.removeItem('pet_google_user');
-  document.getElementById('app').classList.remove('on');
-  document.getElementById('app').style.display='none';
-  document.getElementById('intro').style.display='flex';
-  document.getElementById('intro').classList.remove('out');
-  document.getElementById('name-input').value='';
-  document.getElementById('name-input').style.borderColor='';
-  // Reset Google button
-  const infoEl=document.getElementById('google-signed-in-info');
-  if(infoEl) infoEl.style.display='none';
+  localStorage.removeItem('pet_name');localStorage.removeItem('pet_google_user');
+  document.getElementById('app').classList.remove('on');document.getElementById('app').style.display='none';
+  document.getElementById('intro').style.display='flex';document.getElementById('intro').classList.remove('out');
+  document.getElementById('name-input').value='';document.getElementById('name-input').style.borderColor='';
+  const infoEl=document.getElementById('google-signed-in-info');if(infoEl) infoEl.style.display='none';
   const btn=document.getElementById('google-btn');
   if(btn){
     btn.innerHTML=`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google`;
@@ -2139,35 +1928,95 @@ function logoutUser(){
   }
   showToast('👋 Logged out. See you soon!');
 }
-async function syncSheet(type,data,dotId,textId){
-  if(!gsUrl) return;
-  if(dotId) setSyncSt(dotId,textId,'syncing','Syncing…');
-  try{
-    const userId=isGoogleUser&&googleUser?googleUser.email:userName;
-    const payload={sheet:type,user:userId,timestamp:new Date().toISOString(),...data};
-    await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(dotId){setSyncSt(dotId,textId,'live','Synced ✓');setTimeout(()=>setSyncSt(dotId,textId,'',''),3500);}
-  }catch(e){if(dotId) setSyncSt(dotId,textId,'err','Sync failed');}
-}
-async function loadFromSheet(){
-  if(!gsUrl||!isGoogleUser||!googleUser) return;
-  setGsDot('syncing','Loading…');
-  try{
-    const userId=encodeURIComponent(googleUser.email);
-    const res=await fetch(gsUrl+'?action=load&user='+userId);
-    if(!res.ok) throw new Error('fetch failed');
-    const json=await res.json();
-    let changed=false;
-    if(json.transactions&&json.transactions.length){transactions=json.transactions;localStorage.setItem('pet_tx',JSON.stringify(transactions));changed=true;}
-    if(json.debts&&json.debts.length){debts=json.debts;localStorage.setItem('pet_debts',JSON.stringify(debts));changed=true;}
-    if(json.savings&&json.savings.length){savings=json.savings;localStorage.setItem('pet_savings',JSON.stringify(savings));changed=true;}
-    if(json.tripData&&json.tripData.trips&&json.tripData.trips.length){tripData=json.tripData;localStorage.setItem('pet_trip',JSON.stringify(tripData));changed=true;}
-    if(changed){renderTracker();renderDebts();renderSavingsSummary();renderTripFolders();showToast('✓ Data loaded from Sheets!');}
-    setGsDot('live','Connected');
-  }catch(e){
-    setGsDot('live','Connected');
+
+// ═══════════════════════════════════════════════════════════════
+//  syncSheet — FIXED: removed mode:'no-cors', using text/plain
+//  Content-Type to avoid CORS preflight on Apps Script
+// ═══════════════════════════════════════════════════════════════
+async function syncSheet(type, data, dotId, textId) {
+  if (!gsUrl) return;
+  if (dotId) setSyncSt(dotId, textId, 'syncing', 'Syncing…');
+  try {
+    const userId = isGoogleUser && googleUser ? googleUser.email : userName;
+    const payload = {
+      sheet: type,
+      user: userId,
+      timestamp: new Date().toISOString(),
+      ...data
+    };
+    const res = await fetch(gsUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (dotId) {
+      setSyncSt(dotId, textId, 'live', 'Synced ✓');
+      setTimeout(() => setSyncSt(dotId, textId, '', ''), 3500);
+    }
+  } catch (err) {
+    console.error('syncSheet error:', type, err);
+    if (dotId) setSyncSt(dotId, textId, 'err', 'Sync failed');
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  loadFromSheet — loads all data for a Google user on login
+// ═══════════════════════════════════════════════════════════════
+async function loadFromSheet() {
+  if (!gsUrl || !isGoogleUser || !googleUser) return;
+  setGsDot('syncing', 'Loading…');
+  try {
+    const userId = encodeURIComponent(googleUser.email);
+    const res = await fetch(gsUrl + '?action=load&user=' + userId, { redirect: 'follow' });
+    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    const json = await res.json();
+    let changed = false;
+    if (json.transactions && json.transactions.length) { transactions = json.transactions; localStorage.setItem('pet_tx', JSON.stringify(transactions)); changed = true; }
+    if (json.debts && json.debts.length) { debts = json.debts; localStorage.setItem('pet_debts', JSON.stringify(debts)); changed = true; }
+    if (json.savings && json.savings.length) { savings = json.savings; localStorage.setItem('pet_savings', JSON.stringify(savings)); changed = true; }
+    if (json.tripData && json.tripData.trips && json.tripData.trips.length) { tripData = json.tripData; localStorage.setItem('pet_trip', JSON.stringify(tripData)); changed = true; }
+    if (changed) { renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders(); showToast('✓ Data loaded from Sheets!'); }
+    setGsDot('live', 'Connected');
+  } catch (err) {
+    console.error('loadFromSheet error:', err);
+    setGsDot('live', 'Connected'); // still mark connected even if load fails
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  save — saves locally AND sends full snapshot to Sheets
+//  FIXED: removed mode:'no-cors', using text/plain Content-Type
+// ═══════════════════════════════════════════════════════════════
+function save() {
+  localStorage.setItem('pet_tx',       JSON.stringify(transactions));
+  localStorage.setItem('pet_debts',    JSON.stringify(debts));
+  localStorage.setItem('pet_savings',  JSON.stringify(savings));
+  localStorage.setItem('pet_events',   JSON.stringify(events));
+  localStorage.setItem('pet_event_tx', JSON.stringify(eventTx));
+  localStorage.setItem('pet_trip',     JSON.stringify(tripData));
+
+  // Full snapshot to Google Sheets for Google-signed-in users
+  if (isGoogleUser && googleUser && gsUrl) {
+    const payload = {
+      user: googleUser.email,
+      name: userName,
+      transactions,
+      debts,
+      savings,
+      tripData,
+      timestamp: new Date().toISOString()
+    };
+    fetch(gsUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    }).catch(err => console.error('Snapshot sync error:', err));
+  }
+}
+
 function setSyncSt(dotId,textId,cls,txt){
   const d=document.getElementById(dotId);if(d)d.className='gdot'+(cls?' '+cls:'');
   const t=document.getElementById(textId);if(t)t.textContent=txt;
@@ -2179,19 +2028,6 @@ function setGsDot(cls,txt){
 }
 
 /* ── HELPERS ── */
-function save(){
-  localStorage.setItem('pet_tx',JSON.stringify(transactions));
-  localStorage.setItem('pet_debts',JSON.stringify(debts));
-  localStorage.setItem('pet_savings',JSON.stringify(savings));
-  localStorage.setItem('pet_events',JSON.stringify(events));
-  localStorage.setItem('pet_event_tx',JSON.stringify(eventTx));
-  localStorage.setItem('pet_trip',JSON.stringify(tripData));
-  // Push full snapshot to Sheets for Google users (enables cross-device sync)
-  if(isGoogleUser&&googleUser&&gsUrl){
-    const payload={user:googleUser.email,name:userName,transactions,debts,savings,tripData,timestamp:new Date().toISOString()};
-    fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-  }
-}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function f2(n){return Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fd(s){if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
