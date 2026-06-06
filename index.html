@@ -1970,18 +1970,58 @@ async function loadFromSheet() {
   try {
     const userId = encodeURIComponent(googleUser.email);
     const res = await fetch(gsUrl + '?action=load&user=' + userId, { redirect: 'follow' });
-    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
+
+    // Nothing in sheet yet for this user
+    if (!json || json.status === 'error' || (!json.transactions && !json.debts && !json.savings && !json.tripData)) {
+      setGsDot('live', 'Connected');
+      return;
+    }
+
+    // Compare timestamps: use sheet data if newer OR if local is completely empty
+    const sheetTime = json.lastSaved ? new Date(json.lastSaved).getTime() : 0;
+    const localTime = parseInt(localStorage.getItem('pet_last_save') || '0');
+    const sheetIsNewer = sheetTime > localTime;
+    const localIsEmpty = !transactions.length && !debts.length && !savings.length;
+
+    if (!sheetIsNewer && !localIsEmpty) {
+      setGsDot('live', 'Connected');
+      return;
+    }
+
     let changed = false;
-    if (json.transactions && json.transactions.length) { transactions = json.transactions; localStorage.setItem('pet_tx', JSON.stringify(transactions)); changed = true; }
-    if (json.debts && json.debts.length) { debts = json.debts; localStorage.setItem('pet_debts', JSON.stringify(debts)); changed = true; }
-    if (json.savings && json.savings.length) { savings = json.savings; localStorage.setItem('pet_savings', JSON.stringify(savings)); changed = true; }
-    if (json.tripData && json.tripData.trips && json.tripData.trips.length) { tripData = json.tripData; localStorage.setItem('pet_trip', JSON.stringify(tripData)); changed = true; }
-    if (changed) { renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders(); showToast('✓ Data loaded from Sheets!'); }
+    if (Array.isArray(json.transactions)) {
+      transactions = json.transactions;
+      localStorage.setItem('pet_tx', JSON.stringify(transactions));
+      changed = true;
+    }
+    if (Array.isArray(json.debts)) {
+      debts = json.debts;
+      localStorage.setItem('pet_debts', JSON.stringify(debts));
+      changed = true;
+    }
+    if (Array.isArray(json.savings)) {
+      savings = json.savings;
+      localStorage.setItem('pet_savings', JSON.stringify(savings));
+      changed = true;
+    }
+    if (json.tripData && json.tripData.trips) {
+      tripData = json.tripData;
+      localStorage.setItem('pet_trip', JSON.stringify(tripData));
+      changed = true;
+    }
+    if (changed) {
+      localStorage.setItem('pet_last_save', String(sheetTime || Date.now()));
+      renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
+      showToast('✓ Data synced from Sheets!');
+    }
     setGsDot('live', 'Connected');
   } catch (err) {
     console.error('loadFromSheet error:', err);
-    setGsDot('live', 'Connected'); // still mark connected even if load fails
+    setGsDot('err', 'Load failed');
+    showToast('⚠️ Could not load from Sheets — check your URL.');
+    setTimeout(() => setGsDot('live', 'Connected'), 4000);
   }
 }
 
@@ -1990,14 +2030,15 @@ async function loadFromSheet() {
 //  FIXED: removed mode:'no-cors', using text/plain Content-Type
 // ═══════════════════════════════════════════════════════════════
 function save() {
-  localStorage.setItem('pet_tx',       JSON.stringify(transactions));
-  localStorage.setItem('pet_debts',    JSON.stringify(debts));
-  localStorage.setItem('pet_savings',  JSON.stringify(savings));
-  localStorage.setItem('pet_events',   JSON.stringify(events));
-  localStorage.setItem('pet_event_tx', JSON.stringify(eventTx));
-  localStorage.setItem('pet_trip',     JSON.stringify(tripData));
+  const now = Date.now();
+  localStorage.setItem('pet_tx',        JSON.stringify(transactions));
+  localStorage.setItem('pet_debts',     JSON.stringify(debts));
+  localStorage.setItem('pet_savings',   JSON.stringify(savings));
+  localStorage.setItem('pet_events',    JSON.stringify(events));
+  localStorage.setItem('pet_event_tx',  JSON.stringify(eventTx));
+  localStorage.setItem('pet_trip',      JSON.stringify(tripData));
+  localStorage.setItem('pet_last_save', String(now)); // KEY: timestamp for cross-device sync
 
-  // Full snapshot to Google Sheets for Google-signed-in users
   if (isGoogleUser && googleUser && gsUrl) {
     const payload = {
       user: googleUser.email,
@@ -2006,14 +2047,16 @@ function save() {
       debts,
       savings,
       tripData,
-      timestamp: new Date().toISOString()
+      timestamp: new Date(now).toISOString()
     };
     fetch(gsUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload),
       redirect: 'follow'
-    }).catch(err => console.error('Snapshot sync error:', err));
+    })
+    .then(r => { if (!r.ok) console.error('Snapshot sync HTTP error:', r.status); })
+    .catch(err => console.error('Snapshot sync error:', err));
   }
 }
 
