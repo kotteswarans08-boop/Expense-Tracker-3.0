@@ -1,97 +1,86 @@
-// ── Expense Tracker Service Worker ──────────────────────────
-const CACHE_NAME = 'expense-tracker-v4';
-const BASE = '/Expense-Tracker-3.0';
+// ═══════════════════════════════════════════════════
+// Service Worker — Expense Tracker 3.0
+// Team Tech Royal
+//
+// HOW TO FORCE UPDATE ON MAC/MOBILE PWA:
+// Every time you deploy a new version, increment
+// CACHE_VERSION below (v1 → v2 → v3 etc.)
+// This automatically deletes the old cache and
+// downloads fresh files next time the app opens.
+// ═══════════════════════════════════════════════════
 
-const PRECACHE_URLS = [
-  BASE + '/',
-  BASE + '/index.html',
-  BASE + '/manifest.json',
-  BASE + '/expense_app_icon_512x512_1.png',
+const CACHE_VERSION = 'v4';  // ← bump this on every deploy
+const CACHE_NAME = `expense-tracker-${CACHE_VERSION}`;
+
+const ASSETS_TO_CACHE = [
+  '/Expense-Tracker-3.0/',
+  '/Expense-Tracker-3.0/index.html',
+  '/Expense-Tracker-3.0/manifest.json',
+  '/Expense-Tracker-3.0/expense_app_icon_512x512_1.png',
 ];
 
-// ── INSTALL ─────────────────────────────────────────────────
+// ── Install: cache all core assets ──
 self.addEventListener('install', event => {
+  // Skip waiting so the new SW activates immediately
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // Cache local files strictly
-      return cache.addAll(PRECACHE_URLS).then(() => {
-        // Cache CDN files best-effort (don't fail install if offline)
-        const cdnUrls = [
-          'https://cdn.jsdelivr.net/npm/chart.js',
-          'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap',
-          'https://accounts.google.com/gsi/client'
-        ];
-        return Promise.allSettled(
-          cdnUrls.map(url => cache.add(url).catch(() => {}))
-        );
-      });
-    }).then(() => self.skipWaiting())
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
 });
 
-// ── ACTIVATE ─────────────────────────────────────────────────
+// ── Activate: delete ALL old caches ──
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => {
+            console.log('[SW] Deleting old cache:', key);
+            return caches.delete(key);
+          })
       )
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim()) // take control of all open tabs immediately
   );
 });
 
-// ── FETCH ────────────────────────────────────────────────────
+// ── Fetch: Network-first for HTML/JS, cache-first for images ──
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Only handle GET requests
-  if (event.request.method !== 'GET') return;
-
-  // Skip Google OAuth and API requests — never cache these
-  if (
-    url.hostname === 'accounts.google.com' ||
-    url.hostname === 'oauth2.googleapis.com' ||
-    url.pathname.includes('/gsi/') ||
-    url.pathname.includes('script.google.com')
-  ) {
-    return; // Let browser handle normally
+  // Always go to network for the backend (Google Apps Script)
+  if (url.hostname.includes('script.google.com') ||
+      url.hostname.includes('googleapis.com') ||
+      url.hostname.includes('accounts.google.com')) {
+    return; // let browser handle it normally
   }
 
-  // For navigation (app opens, refreshes) — serve index.html from cache
-  if (event.request.mode === 'navigate') {
+  // Network-first for HTML and JS files — always get latest version
+  if (event.request.destination === 'document' ||
+      event.request.url.endsWith('.html') ||
+      event.request.url.endsWith('.js')) {
     event.respondWith(
-      caches.match(BASE + '/index.html').then(cached => {
-        if (cached) return cached;
-        return fetch(event.request).catch(() =>
-          caches.match(BASE + '/index.html')
-        );
-      })
+      fetch(event.request)
+        .then(response => {
+          // Update cache with fresh version
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request)) // fallback to cache if offline
     );
     return;
   }
 
-  // For all other requests: cache-first, then network
+  // Cache-first for everything else (images, fonts, etc.)
   event.respondWith(
     caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(response => {
-        // Cache valid responses from our origin or allowed CDNs
-        if (
-          response && response.ok &&
-          (url.origin === self.location.origin ||
-           url.hostname === 'fonts.googleapis.com' ||
-           url.hostname === 'fonts.gstatic.com' ||
-           url.hostname === 'cdn.jsdelivr.net')
-        ) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
+      return cached || fetch(event.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return response;
-      }).catch(() => {
-        // Offline fallback
-        if (url.pathname.startsWith(BASE)) {
-          return caches.match(BASE + '/index.html');
-        }
       });
     })
   );
