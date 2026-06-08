@@ -140,6 +140,10 @@ header{background:var(--header-bg);backdrop-filter:blur(24px) saturate(180%);bor
 .gdot.err{background:var(--red);}
 .gs-lbl{display:none;}
 
+.refresh-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--txt2);transition:all 0.2s;padding:0;flex-shrink:0;line-height:1;}
+.refresh-btn:hover{background:var(--accent-bg);border-color:var(--accent2);color:var(--accent);}
+.refresh-btn.spinning{animation:spin 0.6s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .user-chip{font-weight:800;font-size:0.72rem;padding:0.32rem 0.7rem;border-radius:50px;font-family:var(--font-display);letter-spacing:0.2px;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0;}
 [data-theme="light"] .user-chip{background:linear-gradient(135deg,#03045e,#0077b6);color:#caf0f8;}
 [data-theme="dark"] .user-chip{background:linear-gradient(135deg,#0077b6,#00b4d8);color:#03045e;}
@@ -557,11 +561,12 @@ img,video,canvas{max-width:100%;height:auto;}
           <span class="toggle-icon" id="theme-icon">☀️</span>
           <div class="toggle-track"><div class="toggle-knob"></div></div>
         </div>
-        <!-- AUTO-SYNC INDICATOR — shown to Google users, replaces manual Sheets pill -->
-        <div class="sync-indicator guest-mode" id="sync-indicator" title="Cloud Sync Status">
+        <!-- AUTO-SYNC INDICATOR — status display only, not clickable -->
+        <div class="sync-indicator guest-mode" id="sync-indicator">
           <div class="sdot" id="sync-dot"></div>
           <span id="sync-label">Local</span>
         </div>
+        <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()" title="Refresh data from cloud" style="display:none;">↻</button>
         <!-- Hidden gs elements kept for internal sync dot compatibility -->
         <div class="gs-pill" id="gs-pill-hidden">
           <div class="gdot" id="gs-dot"></div>
@@ -1264,12 +1269,7 @@ function showGoogleSignedInInfo(user){
 }
 
 function clearLocalData() {
-  transactions = [];
-  debts = [];
-  savings = [];
-  tripData = { trips: [] };
-  events = [];
-  eventTx = {};
+  transactions = []; debts = []; savings = []; tripData = { trips: [] }; events = []; eventTx = {};
   localStorage.setItem('pet_tx',       JSON.stringify([]));
   localStorage.setItem('pet_debts',    JSON.stringify([]));
   localStorage.setItem('pet_savings',  JSON.stringify([]));
@@ -1279,13 +1279,29 @@ function clearLocalData() {
   localStorage.removeItem('pet_last_save');
 }
 
+let _autoRefreshInterval = null;
+function startAutoRefresh() {
+  stopAutoRefresh();
+  _autoRefreshInterval = setInterval(() => {
+    if (isGoogleUser && googleUser) loadFromSheet();
+  }, 5000);
+}
+function stopAutoRefresh() {
+  if (_autoRefreshInterval) { clearInterval(_autoRefreshInterval); _autoRefreshInterval = null; }
+}
+function manualRefresh() {
+  if (!isGoogleUser || !googleUser) return;
+  const btn = document.getElementById('refresh-btn');
+  if (btn) btn.classList.add('spinning');
+  loadFromSheet().finally(() => { if (btn) btn.classList.remove('spinning'); });
+}
+
 function launch(){
   // ── Detect user switch — clear stale data immediately ──
-  const lastLoggedInUser = localStorage.getItem('pet_logged_in_user');
+  const lastUser = localStorage.getItem('pet_logged_in_user');
   const currentUser = googleUser ? googleUser.email : ('guest_' + userName);
-
-  if (lastLoggedInUser && lastLoggedInUser !== currentUser) {
-    // Different user logged in — wipe previous user's local data
+  if (lastUser && lastUser !== currentUser) {
+    _sessionUser = null; // invalidate any in-flight request
     clearLocalData();
     showToast('👋 Switched account — loading your data…');
   }
@@ -1300,15 +1316,21 @@ function launch(){
   } else {
     chip.textContent=userName;
   }
-  // Update sync indicator
   if(isGoogleUser&&googleUser){
     setSyncIndicator('syncing','Syncing…');
   } else {
     setSyncIndicator('','Local');
   }
   renderTracker();renderDebts();renderSavingsSummary();renderTripFolders();
-  // Auto-load from backend for ALL Google users — no setup required
-  if(isGoogleUser&&googleUser) loadFromSheet();
+  const rb = document.getElementById('refresh-btn');
+  if(isGoogleUser&&googleUser) {
+    if(rb) rb.style.display='flex';
+    loadFromSheet();
+    startAutoRefresh();
+  } else {
+    if(rb) rb.style.display='none';
+    stopAutoRefresh();
+  }
 }
 
 /* ── TABS ── */
@@ -1986,70 +2008,68 @@ async function syncSheet(type, data, dotId, textId) {
 }
 
 // ── loadFromSheet: pull full snapshot on Google login ────────────
+// _sessionUser locks the active user for this session — auto-refresh
+// will abort immediately if the logged-in user changes mid-session.
+let _sessionUser = null;
+
 async function loadFromSheet() {
   if (!isGoogleUser || !googleUser) return;
+
+  // Lock: record who this session belongs to
+  const myEmail = googleUser.email;
+  _sessionUser = myEmail;
+
   setSyncIndicator('syncing', 'Loading…');
-
   try {
-    const userId = encodeURIComponent(googleUser.email);
-    const res = await fetch(BACKEND_URL + '?action=load&user=' + userId,
-                            { redirect: 'follow' });
+    const userId = encodeURIComponent(myEmail);
+    const res = await fetch(BACKEND_URL + '?action=load&user=' + userId, { redirect: 'follow' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
-
     const json = await res.json();
 
-    // ── SECURITY CHECK — verify returned data belongs to THIS user ──
-    if (json.userEmail && json.userEmail !== googleUser.email) {
-      console.error('Data mismatch! Returned email:', json.userEmail,
-                    'Logged in:', googleUser.email);
+    // Abort if user changed while request was in-flight
+    if (_sessionUser !== myEmail) return;
+
+    // ── SECURITY: reject if backend returned data for a different email ──
+    if (json.userEmail && json.userEmail !== myEmail) {
+      console.error('Security: email mismatch', json.userEmail, '!==', myEmail);
       setSyncIndicator('err', 'Auth error');
       showToast('⚠️ Security error — please log out and back in.');
       return;
     }
 
-    if (!json || json.status === 'error' ||
-        (!json.transactions && !json.debts &&
-         !json.savings && !json.tripData)) {
-      // No cloud data for this user — start fresh
-      transactions = [];
-      debts = [];
-      savings = [];
-      tripData = { trips: [] };
+    // ── NEW USER: no data in sheet yet — register them immediately ──
+    if (!json || json.status === 'empty' || json.status === 'error' ||
+        (!json.transactions && !json.debts && !json.savings && !json.tripData)) {
+      transactions = []; debts = []; savings = []; tripData = { trips: [] };
       localStorage.setItem('pet_tx',      JSON.stringify([]));
       localStorage.setItem('pet_debts',   JSON.stringify([]));
       localStorage.setItem('pet_savings', JSON.stringify([]));
       localStorage.setItem('pet_trip',    JSON.stringify({ trips: [] }));
       renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
+      // Push an empty snapshot so the user appears in the sheet right away
+      pushSnapshotToSheet();
       setSyncIndicator('live', '☁️ Ready');
       return;
     }
 
-    // Safe to load
+    // ── Load cloud data — only re-render if something actually changed ──
     let changed = false;
-    if (Array.isArray(json.transactions)) {
-      transactions = json.transactions;
-      localStorage.setItem('pet_tx', JSON.stringify(transactions));
-      changed = true;
-    }
-    if (Array.isArray(json.debts)) {
-      debts = json.debts;
-      localStorage.setItem('pet_debts', JSON.stringify(debts));
-      changed = true;
-    }
-    if (Array.isArray(json.savings)) {
-      savings = json.savings;
-      localStorage.setItem('pet_savings', JSON.stringify(savings));
-      changed = true;
-    }
-    if (json.tripData && json.tripData.trips) {
-      tripData = json.tripData;
-      localStorage.setItem('pet_trip', JSON.stringify(tripData));
-      changed = true;
-    }
+    const inTx  = JSON.stringify(json.transactions || []);
+    const inDb  = JSON.stringify(json.debts || []);
+    const inSv  = JSON.stringify(json.savings || []);
+    const inTr  = JSON.stringify(json.tripData || { trips: [] });
+
+    if (Array.isArray(json.transactions) && inTx !== JSON.stringify(transactions))
+      { transactions = json.transactions; localStorage.setItem('pet_tx', inTx); changed = true; }
+    if (Array.isArray(json.debts) && inDb !== JSON.stringify(debts))
+      { debts = json.debts; localStorage.setItem('pet_debts', inDb); changed = true; }
+    if (Array.isArray(json.savings) && inSv !== JSON.stringify(savings))
+      { savings = json.savings; localStorage.setItem('pet_savings', inSv); changed = true; }
+    if (json.tripData && json.tripData.trips && inTr !== JSON.stringify(tripData))
+      { tripData = json.tripData; localStorage.setItem('pet_trip', inTr); changed = true; }
 
     if (changed) {
       renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
-      showToast('☁️ Your data loaded!');
     }
     setSyncIndicator('live', '☁️ Synced');
 
@@ -2059,6 +2079,23 @@ async function loadFromSheet() {
     showToast('⚠️ Cloud sync failed — local data is safe.');
     setTimeout(() => setSyncIndicator('live', '☁️'), 5000);
   }
+}
+
+// ── pushSnapshotToSheet: push current state to backend ───────────
+function pushSnapshotToSheet() {
+  if (!isGoogleUser || !googleUser) return;
+  const payload = {
+    user: googleUser.email,
+    name: userName,
+    transactions, debts, savings, tripData,
+    timestamp: new Date().toISOString()
+  };
+  fetch(BACKEND_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload),
+    redirect: 'follow'
+  }).catch(err => console.error('pushSnapshotToSheet error:', err));
 }
 
 // ── save: local save + auto-push snapshot for Google users ───────
@@ -2072,16 +2109,12 @@ function save() {
   localStorage.setItem('pet_trip',      JSON.stringify(tripData));
   localStorage.setItem('pet_last_save', String(now));
 
-  // Auto-push full snapshot for Google users — no user action needed
   if (isGoogleUser && googleUser) {
     setSyncIndicator('syncing', 'Saving…');
     const payload = {
       user: googleUser.email,
       name: userName,
-      transactions,
-      debts,
-      savings,
-      tripData,
+      transactions, debts, savings, tripData,
       timestamp: new Date(now).toISOString()
     };
     fetch(BACKEND_URL, {
@@ -2113,8 +2146,13 @@ function setGsDot(cls,txt){
 
 function logoutUser(){
   if(!confirm('Log out? Your data is saved locally and will be here when you return.')) return;
+  stopAutoRefresh();
+  _sessionUser = null;
+  const rb = document.getElementById('refresh-btn');
+  if(rb) rb.style.display='none';
   userName='';isGoogleUser=false;googleUser=null;
-  localStorage.removeItem('pet_name');localStorage.removeItem('pet_google_user');
+  localStorage.removeItem('pet_name');
+  localStorage.removeItem('pet_google_user');
   localStorage.removeItem('pet_logged_in_user');
   clearLocalData();
   document.getElementById('app').classList.remove('on');document.getElementById('app').style.display='none';
