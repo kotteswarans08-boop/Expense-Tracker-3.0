@@ -1263,7 +1263,34 @@ function showGoogleSignedInInfo(user){
   }
 }
 
+function clearLocalData() {
+  transactions = [];
+  debts = [];
+  savings = [];
+  tripData = { trips: [] };
+  events = [];
+  eventTx = {};
+  localStorage.setItem('pet_tx',       JSON.stringify([]));
+  localStorage.setItem('pet_debts',    JSON.stringify([]));
+  localStorage.setItem('pet_savings',  JSON.stringify([]));
+  localStorage.setItem('pet_trip',     JSON.stringify({ trips: [] }));
+  localStorage.setItem('pet_events',   JSON.stringify([]));
+  localStorage.setItem('pet_event_tx', JSON.stringify({}));
+  localStorage.removeItem('pet_last_save');
+}
+
 function launch(){
+  // ── Detect user switch — clear stale data immediately ──
+  const lastLoggedInUser = localStorage.getItem('pet_logged_in_user');
+  const currentUser = googleUser ? googleUser.email : ('guest_' + userName);
+
+  if (lastLoggedInUser && lastLoggedInUser !== currentUser) {
+    // Different user logged in — wipe previous user's local data
+    clearLocalData();
+    showToast('👋 Switched account — loading your data…');
+  }
+  localStorage.setItem('pet_logged_in_user', currentUser);
+
   document.getElementById('intro').classList.add('out');
   setTimeout(()=>document.getElementById('intro').style.display='none',850);
   document.getElementById('app').classList.add('on');
@@ -1962,43 +1989,74 @@ async function syncSheet(type, data, dotId, textId) {
 async function loadFromSheet() {
   if (!isGoogleUser || !googleUser) return;
   setSyncIndicator('syncing', 'Loading…');
+
   try {
     const userId = encodeURIComponent(googleUser.email);
-    const res = await fetch(BACKEND_URL + '?action=load&user=' + userId, { redirect: 'follow' });
+    const res = await fetch(BACKEND_URL + '?action=load&user=' + userId,
+                            { redirect: 'follow' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
+
     const json = await res.json();
 
-    if (!json || json.status === 'error' || (!json.transactions && !json.debts && !json.savings && !json.tripData)) {
+    // ── SECURITY CHECK — verify returned data belongs to THIS user ──
+    if (json.userEmail && json.userEmail !== googleUser.email) {
+      console.error('Data mismatch! Returned email:', json.userEmail,
+                    'Logged in:', googleUser.email);
+      setSyncIndicator('err', 'Auth error');
+      showToast('⚠️ Security error — please log out and back in.');
+      return;
+    }
+
+    if (!json || json.status === 'error' ||
+        (!json.transactions && !json.debts &&
+         !json.savings && !json.tripData)) {
+      // No cloud data for this user — start fresh
+      transactions = [];
+      debts = [];
+      savings = [];
+      tripData = { trips: [] };
+      localStorage.setItem('pet_tx',      JSON.stringify([]));
+      localStorage.setItem('pet_debts',   JSON.stringify([]));
+      localStorage.setItem('pet_savings', JSON.stringify([]));
+      localStorage.setItem('pet_trip',    JSON.stringify({ trips: [] }));
+      renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
       setSyncIndicator('live', '☁️ Ready');
       return;
     }
 
-    const sheetTime = json.lastSaved ? new Date(json.lastSaved).getTime() : 0;
-    const localTime = parseInt(localStorage.getItem('pet_last_save') || '0');
-    const sheetIsNewer = sheetTime > localTime;
-    const localIsEmpty = !transactions.length && !debts.length && !savings.length;
-
-    if (!sheetIsNewer && !localIsEmpty) {
-      setSyncIndicator('live', '☁️ Synced');
-      return;
-    }
-
+    // Safe to load
     let changed = false;
-    if (Array.isArray(json.transactions)) { transactions = json.transactions; localStorage.setItem('pet_tx', JSON.stringify(transactions)); changed = true; }
-    if (Array.isArray(json.debts))        { debts = json.debts; localStorage.setItem('pet_debts', JSON.stringify(debts)); changed = true; }
-    if (Array.isArray(json.savings))      { savings = json.savings; localStorage.setItem('pet_savings', JSON.stringify(savings)); changed = true; }
-    if (json.tripData && json.tripData.trips) { tripData = json.tripData; localStorage.setItem('pet_trip', JSON.stringify(tripData)); changed = true; }
+    if (Array.isArray(json.transactions)) {
+      transactions = json.transactions;
+      localStorage.setItem('pet_tx', JSON.stringify(transactions));
+      changed = true;
+    }
+    if (Array.isArray(json.debts)) {
+      debts = json.debts;
+      localStorage.setItem('pet_debts', JSON.stringify(debts));
+      changed = true;
+    }
+    if (Array.isArray(json.savings)) {
+      savings = json.savings;
+      localStorage.setItem('pet_savings', JSON.stringify(savings));
+      changed = true;
+    }
+    if (json.tripData && json.tripData.trips) {
+      tripData = json.tripData;
+      localStorage.setItem('pet_trip', JSON.stringify(tripData));
+      changed = true;
+    }
 
     if (changed) {
-      localStorage.setItem('pet_last_save', String(sheetTime || Date.now()));
       renderTracker(); renderDebts(); renderSavingsSummary(); renderTripFolders();
-      showToast('☁️ Data synced from cloud!');
+      showToast('☁️ Your data loaded!');
     }
     setSyncIndicator('live', '☁️ Synced');
+
   } catch (err) {
     console.error('loadFromSheet error:', err);
     setSyncIndicator('err', 'Load err');
-    showToast('⚠️ Cloud sync failed — your local data is safe.');
+    showToast('⚠️ Cloud sync failed — local data is safe.');
     setTimeout(() => setSyncIndicator('live', '☁️'), 5000);
   }
 }
@@ -2057,6 +2115,8 @@ function logoutUser(){
   if(!confirm('Log out? Your data is saved locally and will be here when you return.')) return;
   userName='';isGoogleUser=false;googleUser=null;
   localStorage.removeItem('pet_name');localStorage.removeItem('pet_google_user');
+  localStorage.removeItem('pet_logged_in_user');
+  clearLocalData();
   document.getElementById('app').classList.remove('on');document.getElementById('app').style.display='none';
   document.getElementById('intro').style.display='flex';document.getElementById('intro').classList.remove('out');
   document.getElementById('name-input').value='';document.getElementById('name-input').style.borderColor='';
